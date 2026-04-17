@@ -89,12 +89,12 @@ cython_debug/
 # Ignore contents of specific directories but keep README files
 /temp/*
 !/temp/README.md
-!/temp/readme.md
 
 /plans/*
 !/plans/README.md
-!/plans/readme.md
 
 /general/*
 !/general/README.md
-!/general/readme.md
+
+/data/*
+!/data/README.md
