@@ -1,0 +1,89 @@
+
+%%{init: {'theme': 'dark', 'themeVariables': { 'background': '#000000', 'lineColor': '#ffffff'}}}%%
+flowchart LR
+    %% Diagram name: askbd
+
+    %% Entities
+    S[Student]
+    P[Professor]
+    C[Course]
+
+    %% Relationships
+    Eval{Evaluates}
+    Enroll{Enrollment}
+    Teach{Teaches}
+
+    %% Entity-Relationship Connections (using longer lines to untangle)
+    S ---- Eval
+    Eval ----|"<font color='lightgreen'>o&lt;</font>"| P
+
+    S ----|"<font color='lightgreen'>(1,M)</font>"| Enroll
+    Enroll ----|"<font color='lightgreen'>(1,M) o&lt;</font>"| C
+
+    P ----|"<font color='lightgreen'>|&lt;</font>"| Teach
+    Teach ---- C
+
+    %% Attributes S
+    S_Name(["(Full Name)"])
+    S_AM(["<u>Registration Number</u>"])
+    S_User([Username])
+    S_Pass([Password])
+    S_Email([Email])
+
+    S --- S_Name
+    S --- S_AM
+    S --- S_User
+    S --- S_Pass
+    S --- S_Email
+
+    %% Attributes Eval
+    Eval_Grade([Grade]):::shaded
+    Eval_Comments([Comments]):::multivalued
+
+    Eval --- Eval_Grade
+    Eval --- Eval_Comments
+
+    %% Attributes P
+    P_Name(["(Full Name)"])
+    P_FName([First Name])
+    P_LName([Last Name])
+    P_Email([Email])
+    P_Spec([Specialization])
+    P_AM(["<u>Registration Number</u>"])
+
+    P --- P_Name
+    P_Name --- P_FName
+    P_Name --- P_LName
+    P --- P_Email
+    P --- P_Spec
+    P --- P_AM
+
+    %% Attributes Enroll
+    Enroll_Grade([Grade])
+    Enroll_Date([Date])
+
+    Enroll --- Enroll_Grade
+    Enroll --- Enroll_Date
+
+    %% Attributes C
+    C_Desc(["(Description)"])
+    C_Cat([Category])
+    C_Code(["<u>Course Code</u>"])
+    C_Title([Title])
+
+    C --- C_Desc
+    C --- C_Cat
+    C --- C_Code
+    C --- C_Title
+
+    %% Apply Classes to Entities and Relationships (Roots)
+    class S,P,C,Eval,Enroll,Teach rootNode;
+
+    %% Apply Classes to Attributes (Branches)
+    class S_Name,S_AM,S_User,S_Pass,S_Email,P_Name,P_FName,P_LName,P_Email,P_Spec,P_AM,Enroll_Grade,Enroll_Date,C_Desc,C_Cat,C_Code,C_Title branchNode;
+
+    %% Styling Definitions
+    classDef rootNode fill:#0055ff,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef branchNode fill:#ffcc00,stroke:#333,stroke-width:2px,color:#000;
+    classDef shaded fill:#cc9900,stroke:#333,stroke-width:2px,color:#000;
+    classDef multivalued fill:#ffcc00,stroke:#333,stroke-width:4px,color:#000;

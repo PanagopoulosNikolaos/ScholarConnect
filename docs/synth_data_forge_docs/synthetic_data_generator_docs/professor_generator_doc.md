@@ -81,7 +81,7 @@ def generate(self, n: int = 10) -> pd.DataFrame
 
 #### Dependencies
 * **Required Libraries:** `pandas` (Formatting row data), `random` (Specialization choices)
-* **Internal Modules:** `self._reg_number` (Generating IDs)
+* **Internal Modules:** `self._regNumber` (Generating IDs)
 
 #### Workflow (Executable Logic Only)
 
@@ -103,7 +103,7 @@ Validates minimum limit bounds and prepares variables.
 Iteratively generates specific details for every requested professor.
 * **Operation 1:** Extracts `first_name` and `last_name` using `self._fake`.
 * **Operation 2:** Generates an `email`, entering a `while` loop until a unique email string is discovered, and saves it into `seen_emails`.
-* **Operation 3:** Constructs the row dictionary using `_reg_number`, Faker values, and a randomly selected `_SPECIALIZATIONS` string, then appends it to `rows`.
+* **Operation 3:** Constructs the row dictionary using `_regNumber`, Faker values, and a randomly selected `_SPECIALIZATIONS` string, then appends it to `rows`.
 
 *Code Context:*
 ```python
@@ -117,7 +117,7 @@ Iteratively generates specific details for every requested professor.
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._reg_number("P", idx),
+                "registration_number": self._regNumber("P", idx),
                 "first_name":          first,
                 "last_name":           last,
                 "email":               email,
@@ -148,7 +148,7 @@ Packs list data to tabular structures.
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._reg_number("P", idx),
+                "registration_number": self._regNumber("P", idx),
                 "first_name":          first,
                 "last_name":           last,
                 "email":               email,

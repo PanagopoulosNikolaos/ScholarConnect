@@ -108,7 +108,7 @@ class CourseGenerator(BaseGenerator):
 
         for idx, (category, title) in enumerate(pool[:target], start=1):
             rows.append({
-                "course_code":  self._reg_number("C", idx, width=4),
+                "course_code":  self._regNumber("C", idx, width=4),
                 "title":        title,
                 "category":     category,
                 "description":  self._fake.paragraph(nb_sentences=3),

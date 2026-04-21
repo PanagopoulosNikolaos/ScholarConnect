@@ -13,7 +13,7 @@ class BaseGenerator:
 
     Functions:
         __init__    -- Initialises Faker and stores the RNG seed.
-        _reg_number -- Generates a zero-padded registration-number string.
+        _regNumber  -- Generates a zero-padded registration-number string.
     """
 
     def __init__(self, seed: int | None = None) -> None:
@@ -31,7 +31,7 @@ class BaseGenerator:
             Faker.seed(seed)
             random.seed(seed)
 
-    def _reg_number(self, prefix: str, index: int, width: int = 6) -> str:
+    def _regNumber(self, prefix: str, index: int, width: int = 6) -> str:
         """
         Builds a formatted registration number used as a primary key.
 

@@ -88,7 +88,7 @@ def generate(self, n: int | None = None) -> pd.DataFrame
 
 #### Dependencies
 * **Required Libraries:** `pandas` (Returning generated row sets)
-* **Internal Modules:** `self._reg_number` (Generating formatted code numbers)
+* **Internal Modules:** `self._regNumber` (Generating formatted code numbers)
 
 #### Workflow (Executable Logic Only)
 
@@ -125,7 +125,7 @@ Appends extra elements to the list if requested to produce more records than pre
 **Phase 3: Row Construction**
 Converts data sets into dictionary records and constructs the DataFrame.
 * **Operation 1:** Sets the target number of records up to `n` or the size of `pool`.
-* **Operation 2:** Iterates through the bounded target list, building course rows using the category and titles. Uses the `_reg_number` tool for IDs and `Faker.paragraph` for descriptions.
+* **Operation 2:** Iterates through the bounded target list, building course rows using the category and titles. Uses the `_regNumber` tool for IDs and `Faker.paragraph` for descriptions.
 * **Operation 3:** Converts the constructed list of dictionaries into a `pd.DataFrame`.
 
 #### Source Code
@@ -151,7 +151,7 @@ Converts data sets into dictionary records and constructs the DataFrame.
 
         for idx, (category, title) in enumerate(pool[:target], start=1):
             rows.append({
-                "course_code":  self._reg_number("C", idx, width=4),
+                "course_code":  self._regNumber("C", idx, width=4),
                 "title":        title,
                 "category":     category,
                 "description":  self._fake.paragraph(nb_sentences=3),

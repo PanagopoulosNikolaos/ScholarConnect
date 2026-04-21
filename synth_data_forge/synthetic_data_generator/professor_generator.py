@@ -70,7 +70,7 @@ class ProfessorGenerator(BaseGenerator):
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._reg_number("P", idx),
+                "registration_number": self._regNumber("P", idx),
                 "first_name":          first,
                 "last_name":           last,
                 "email":               email,

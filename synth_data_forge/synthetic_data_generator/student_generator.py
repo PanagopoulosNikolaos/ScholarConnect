@@ -71,7 +71,7 @@ class StudentGenerator(BaseGenerator):
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._reg_number("S", idx),
+                "registration_number": self._regNumber("S", idx),
                 "full_name":           f"{first} {last}",
                 "username":            username,
                 "password":            self._fake.password(

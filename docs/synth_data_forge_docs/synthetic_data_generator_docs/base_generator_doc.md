@@ -6,7 +6,7 @@
 |------|------|-------------|
 | [BaseGenerator](#basegenerator) | Class | Shared foundation for all ScholarConnect synthetic-data generators. |
 | [BaseGenerator.__init__](#__init__) | Function | Initialises the shared Faker instance and RNG seed. |
-| [BaseGenerator._reg_number](#_reg_number) | Function | Builds a formatted registration number used as a primary key. |
+| [BaseGenerator._regNumber](#_regNumber) | Function | Builds a formatted registration number used as a primary key. |
 
 ## Overview
 This file defines the `BaseGenerator` class which acts as a shared foundation for all synthetic data generators within the ScholarConnect project. It sets up a common Faker instance and random seed for reproducibility and provides utility methods.
@@ -15,7 +15,7 @@ This file defines the `BaseGenerator` class which acts as a shared foundation fo
 
 ## BaseGenerator
 
-**Class Responsibility:** Provides the shared foundation for all ScholarConnect synthetic-data generators. It initializes a shared Faker instance (optionally seeded for reproducibility) and exposes common helper functions like `_reg_number` used by all inheriting sub-generators.
+**Class Responsibility:** Provides the shared foundation for all ScholarConnect synthetic-data generators. It initializes a shared Faker instance (optionally seeded for reproducibility) and exposes common helper functions like `_regNumber` used by all inheriting sub-generators.
 
 ### __init__
 
@@ -61,11 +61,11 @@ def __init__(self, seed: int | None = None) -> None
 | Faker | External | Synthetic data generation | faker |
 | random | External | Random number generation | random |
 
-### _reg_number
+### _regNumber
 
 **Signature:**
 ```python
-def _reg_number(self, prefix: str, index: int, width: int = 6) -> str
+def _regNumber(self, prefix: str, index: int, width: int = 6) -> str
 ```
 
 **Purpose:** Builds a formatted registration number used as a primary key.
@@ -84,12 +84,12 @@ def _reg_number(self, prefix: str, index: int, width: int = 6) -> str
 
 **Source Code:**
 ```python
-    def _reg_number(self, prefix: str, index: int, width: int = 6) -> str:
+    def _regNumber(self, prefix: str, index: int, width: int = 6) -> str:
         return f"{prefix}{str(index).zfill(width)}"
 ```
 
 **Implementation (Executable Logic Only):**
-* **Line 0:** `def _reg_number(self, prefix: str, index: int, width: int = 6) -> str:` — Function definition.
+* **Line 0:** `def _regNumber(self, prefix: str, index: int, width: int = 6) -> str:` — Function definition.
 * **Line 1:** `return f"{prefix}{str(index).zfill(width)}"` — Combines the string prefix with the zero-padded index to form the complete registration number.
 
 **Dependencies:**
