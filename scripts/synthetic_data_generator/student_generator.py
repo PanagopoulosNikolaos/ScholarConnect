@@ -17,7 +17,7 @@ class StudentGenerator(BaseGenerator):
     """
 
     # Academic-domain usernames keep a realistic feel.
-    _USERNAME_SUFFIXES = ["_uni", "_stud", "2024", "2025", "_sc", ""]
+    _username_suffixes = ["_uni", "_stud", "2024", "2025", "_sc", ""]
 
     def __init__(self, seed: int | None = None) -> None:
         """
@@ -57,7 +57,7 @@ class StudentGenerator(BaseGenerator):
 
             # Build a unique username derived from the person's name.
             base_uname = f"{first.lower()}.{last.lower()}"
-            suffix     = random.choice(self._USERNAME_SUFFIXES)
+            suffix     = random.choice(self._username_suffixes)
             username   = f"{base_uname}{suffix}"
             # Append a counter suffix when collisions occur.
             while username in seen_usernames:

@@ -17,7 +17,7 @@ Dependency order (mirrors FK constraints from db_relations_diagram.md):
     7. EvaluationComments    -- depends on ProfessorEvaluations
 """
 
-from synth_data_forge.synthetic_data_generator import (
+from . import (
     StudentGenerator,
     ProfessorGenerator,
     CourseGenerator,
@@ -26,10 +26,10 @@ from synth_data_forge.synthetic_data_generator import (
 
 # Configuration
 
-SEED          = 42    # Ensures identical output on every run.
-N_STUDENTS    = 80
-N_PROFESSORS  = 12
-N_COURSES     = None  # None → full 25-course catalogue.
+seed           = 42    # Ensures identical output on every run.
+n_students     = 80
+n_professors   = 12
+n_courses      = None  # None → full 25-course catalogue.
 
 
 def main() -> None:
@@ -41,9 +41,9 @@ def main() -> None:
     """
     # Standalone entity tables
 
-    students_df   = StudentGenerator(seed=SEED).generate(n=N_STUDENTS)
-    professors_df = ProfessorGenerator(seed=SEED).generate(n=N_PROFESSORS)
-    courses_df    = CourseGenerator(seed=SEED).generate(n=N_COURSES)
+    students_df   = StudentGenerator(seed=seed).generate(n=n_students)
+    professors_df = ProfessorGenerator(seed=seed).generate(n=n_professors)
+    courses_df    = CourseGenerator(seed=seed).generate(n=n_courses)
 
     # Relationship / junction tables
 
@@ -51,7 +51,7 @@ def main() -> None:
         students_df=students_df,
         professors_df=professors_df,
         courses_df=courses_df,
-        seed=SEED,
+        seed=seed,
     )
 
     teaching_df   = rel_gen.generateTeaching(max_courses_per_prof=4)

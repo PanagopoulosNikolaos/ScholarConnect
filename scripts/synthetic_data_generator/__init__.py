@@ -1,5 +1,5 @@
 """
-data/synthetic_data_generator/__init__.py
+scripts/synthetic_data_generator/__init__.py
 
 Public API for the ScholarConnect synthetic-data generator package.
 """

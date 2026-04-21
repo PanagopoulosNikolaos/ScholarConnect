@@ -20,7 +20,7 @@ To get started with the project, follow these steps:
     ```
 3.  **Explore the Documentation:**
     - [Database Schema](db/schema.md)
-    - [Development Plan](plans/plan.md)
+    - [Development Plan](plan/plan.md)
 
 ## Technologies Used
 
