@@ -16,18 +16,38 @@ To get started with the project, follow these steps:
     ```
 2.  **Install dependencies:**
     ```bash
-    pip install -r requirements.txt
+    conda run -n py14 pip install -r requirements.txt
     ```
-3.  **Explore the Documentation:**
+3.  **Generate synthetic datasets (using conda env `py14`):**
+    ```bash
+    conda run -n py14 python -m scripts.main
+    ```
+4.  **Create and seed SQLite database:**
+    ```bash
+    conda run -n py14 python -m scripts.seed_sqlite --db-path db/scholarconnect.sqlite3
+    ```
+5.  **Explore the Documentation:**
     - [Database Schema](db/schema.md)
+    - [SQLite Schema SQL](db/schema.sql)
     - [Development Plan](plan/plan.md)
+    - [UI Plan](plan/ui_plan.md)
 
 ## Technologies Used
 
 - **Backend:** Python, FastAPI, SQLAlchemy
-- **Database:** SQL (PostgreSQL recommended)
+- **Database:** SQLite
 - **Data Engineering:** Pandas, Faker, NumPy
-- **Frontend:** HTML/JS or Desktop Framework (TBD)
+- **Frontend:** Python TUI (planned), with optional future web API + frontend split
+
+## Planned UI Approach (MVP)
+
+The first interactive client will be a **Python TUI (terminal UI)** focused on:
+
+1. Login
+2. Logout
+3. Manual account creation
+
+This keeps the learning curve low while still delivering a real user flow on top of SQLite.
 
 ---
 

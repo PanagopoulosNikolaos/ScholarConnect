@@ -1,4 +1,4 @@
-## SQL Schema
+## SQLite Schema
 
 ```sql
 CREATE TABLE Students (
@@ -115,7 +115,7 @@ CREATE TABLE EvaluationComments (
      *     professor_registration_number (VARCHAR): Reference to the professor.
      *     comment_text (TEXT): The feedback content provided.
      */
-    comment_id INT PRIMARY KEY AUTO_INCREMENT,
+    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_registration_number VARCHAR(20),
     professor_registration_number VARCHAR(20),
     comment_text TEXT NOT NULL,
@@ -123,3 +123,5 @@ CREATE TABLE EvaluationComments (
         REFERENCES ProfessorEvaluations(student_registration_number, professor_registration_number)  -- Links comments to a specific evaluation instance.
 );
 ```
+
+For executable schema creation, use [`schema.sql`](./schema.sql).

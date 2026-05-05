@@ -31,8 +31,8 @@ This document outlines the strategic roadmap for ScholarConnect, a comprehensive
 
 | Task | Description | Status |
 | :--- | :--- | :--- |
-| **Database Connection & Seeding** | Write a script to automate database creation and populate tables using validated dataframes. | Pending |
-| **Seeding Order Optimization** | Ensure the seeding process respects table dependencies and relational constraints. | Pending |
+| **Database Connection & Seeding** | Automate SQLite database creation and populate tables using validated dataframes. | Completed |
+| **Seeding Order Optimization** | Ensure the seeding process respects table dependencies and relational constraints. | Completed |
 | **FastAPI REST Implementation** | Build API endpoints for CRUD operations and platform-specific logic. | Pending |
 | **Core Business Logic** | Implement logic for Student enrollment, Course management, and Grading systems. | Pending |
 
@@ -43,7 +43,7 @@ This document outlines the strategic roadmap for ScholarConnect, a comprehensive
 
 | Task | Description | Status |
 | :--- | :--- | :--- |
-| **Frontend Development** | Create a web/desktop UI to interact with the FastAPI backend. | Pending |
-| **View Implementation** | Build views for profile management, course browsing, and grade dashboards. | Pending |
+| **Frontend Development** | Create a Python TUI app to interact directly with SQLite for MVP authentication flows. | Pending |
+| **View Implementation** | Build screens for login, logout, account creation, and a basic authenticated home view. | Pending |
 | **End-to-End Testing** | Verify that UI actions correctly update the database and reflect in API responses. | Pending |
 | **System Finalization** | Perform full-stack integration tests and bug fixes. | Pending |
