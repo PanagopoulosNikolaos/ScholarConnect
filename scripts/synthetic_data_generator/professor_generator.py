@@ -8,7 +8,7 @@ class ProfessorGenerator(BaseGenerator):
     """
     Generates synthetic rows for the INSTRUCTOR table.
 
-    Each row includes: AM, Password, FirstName, LastName, email, Specialization.
+    Each row includes: AM, Password, Username, FirstName, LastName, email, Specialization.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
@@ -76,6 +76,7 @@ class ProfessorGenerator(BaseGenerator):
                                            digits=True,
                                            upper_case=True,
                                        ),
+                "Username":            self._fake.user_name() + str(idx),
                 "FirstName":           first,
                 "LastName":            last,
                 "email":               email,

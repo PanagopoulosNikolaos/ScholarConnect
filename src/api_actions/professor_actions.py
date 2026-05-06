@@ -1,15 +1,16 @@
 from src.database import getConnection
 
 # Allowed columns for professor updates to prevent SQL errors and protect the primary key.
-PROFESSOR_UPDATE_WHITELIST = {"FirstName", "LastName", "Password", "email", "Specialization"}
+PROFESSOR_UPDATE_WHITELIST = {"FirstName", "LastName", "Username", "Password", "email", "Specialization"}
 
-def addProfessor(AM, Password, FirstName, LastName, email, Specialization):
+def addProfessor(AM, Password, Username, FirstName, LastName, email, Specialization):
     """
     Inserts a new instructor record into the database.
 
     Args:
         AM (str): The unique instructor identifier.
         Password (str): Securely stored credential for login.
+        Username (str): Unique handle for login.
         FirstName (str): The instructor's given name.
         LastName (str): The instructor's family name.
         email (str): Instructor's primary contact address.
@@ -22,8 +23,8 @@ def addProfessor(AM, Password, FirstName, LastName, email, Specialization):
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO INSTRUCTOR (AM, Password, FirstName, LastName, email, Specialization) VALUES (?, ?, ?, ?, ?, ?)",
-            (AM, Password, FirstName, LastName, email, Specialization)
+            "INSERT INTO INSTRUCTOR (AM, Password, Username, FirstName, LastName, email, Specialization) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (AM, Password, Username, FirstName, LastName, email, Specialization)
         )
         conn.commit()
         return True

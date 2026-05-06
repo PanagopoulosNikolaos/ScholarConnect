@@ -1,7 +1,3 @@
-## SQLite Schema
-### ER Diagram
-
-```mermaid
 %%{init: {
   'theme': 'dark',
   'themeVariables': {
@@ -30,7 +26,7 @@ flowchart TD
     
     %% User Entities Branch
     users_branch --> student_node["STUDENT<br/>---<br/>AM (PK)<br/> Password<br/>Username (UK)<br/>email (UK)<br/>FirstName<br/>LastName"]
-    users_branch --> instructor_node["INSTRUCTOR<br/>---<br/>AM (PK)<br/> Password<br/>FirstName<br/>LastName<br/>email (UK)<br/>Specialization"]
+    users_branch --> instructor_node["INSTRUCTOR<br/>---<br/>AM (PK)<br/> Password<br/>Username (UK)<br/>FirstName<br/>LastName<br/>email (UK)<br/>Specialization"]
     
     %% Academic Content Branch
     academic_branch --> course_node["COURSE<br/>---<br/>C_Code (PK)<br/>AM_Instructor (FK)<br/> Title<br/> Description<br/> Category"]
@@ -53,7 +49,3 @@ flowchart TD
     
     class users_branch,academic_branch,engagement_branch branch;
     class db_root fill:#000000,stroke:#ffffff,stroke-width:3px;
-```
-
-
-#### The executable schema code is in the file: [`schema.sql`](./schema.sql).

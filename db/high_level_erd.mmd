@@ -25,6 +25,7 @@ flowchart LR
 
     %% Attributes Instructor/Professor
     P --- P_AM(["<u>Registration Number (AM)</u>"])
+    P --- P_User([Username])
     P --- P_Name(["(Full Name)"])
     P_Name --- P_FName([First Name])
     P_Name --- P_LName([Last Name])
@@ -47,7 +48,7 @@ flowchart LR
     class S,P,C,Eval,Enroll,Teach rootNode;
 
     %% Apply Classes to Attributes (Branches)
-    class S_User,S_Name,S_FName,S_LName,S_Pass,S_Email,S_AM,P_AM,P_Name,P_FName,P_LName,P_Email,P_Pass,P_Spec,C_Title,C_Code,C_Desc,C_Cat,Eval_Grade,Eval_Comments,Enroll_Date branchNode;
+    class S_User,S_Name,S_FName,S_LName,S_Pass,S_Email,S_AM,P_AM,P_User,P_Name,P_FName,P_LName,P_Email,P_Pass,P_Spec,C_Title,C_Code,C_Desc,C_Cat,Eval_Grade,Eval_Comments,Enroll_Date branchNode;
 
     %% Styling Definitions
     classDef rootNode fill:#0055ff,stroke:#fff,stroke-width:2px,color:#fff;
