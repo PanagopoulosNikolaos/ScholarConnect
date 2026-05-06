@@ -1,15 +1,16 @@
 # ScholarConnect
 
-ScholarConnect is a centralized academic management platform designed to streamline interactions between students and teachers. The system focuses on robust data management, automated grading, and a seamless user experience.
-
-
+ScholarConnect is a centralized academic management platform designed to streamline interactions between students and teachers. 
 
 ---
 
 ## Getting Started
 
-To get started with the project, follow these steps:
+> Conda or Virtual Enviroment recommended as faker cannot be installed on the root environment.
+> `sudo apt install python3-faker` will fail.
 
+#### Conda docs: [Documentation](https://docs.conda.io/en/latest/miniconda.html)
+#### Python Virtual Enviroment docs: [Documentation](https://docs.python.org/3/library/venv.html)
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/PanagopoulosNikolaos/ScholarConnect.git
@@ -34,21 +35,11 @@ To get started with the project, follow these steps:
 
 ## Technologies Used
 
-- **Backend:** Python, FastAPI, SQLAlchemy
+- **Backend:** Python, sqlite3
 - **Database:** SQLite
-- **Data Engineering:** Pandas, Faker, NumPy
-- **Frontend:** Python TUI (planned), with optional future web API + frontend split
+- **Data Engineering:** Pandas, Faker
+- **Frontend:** Python TUI (planned)
 
-## Planned UI Approach (MVP)
 
-The first interactive client will be a **Python TUI (terminal UI)** focused on:
-
-1. Login
-2. Logout
-3. Manual account creation
-
-This keeps the learning curve low while still delivering a real user flow on top of SQLite.
-
----
 
 *Note: This project is currently under active development.*

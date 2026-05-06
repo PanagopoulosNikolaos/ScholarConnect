@@ -3,3 +3,4 @@ numpy==2.4.4
 pandas==3.0.2
 plotly==6.7.0
 sqlalchemy==2.0.23
+sqlite3
