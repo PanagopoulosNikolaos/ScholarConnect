@@ -9,7 +9,7 @@ class CourseGenerator(BaseGenerator):
     """
     Generates synthetic rows for the Courses table.
 
-    Each row includes: course_code, title, category, and description.
+    Each row includes: C_Code, AM_Instructor, Title, Description, Category.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
@@ -71,7 +71,7 @@ class CourseGenerator(BaseGenerator):
             for title in titles
         ]
 
-    def generate(self, n: int | None = None) -> pd.DataFrame:
+    def generate(self, professors_df: pd.DataFrame, n: int | None = None) -> pd.DataFrame:
         """
         Produces a DataFrame of synthetic course records.
 
@@ -80,6 +80,7 @@ class CourseGenerator(BaseGenerator):
         Faker-derived titles to satisfy the request.
 
         Args:
+            professors_df (pd.DataFrame): DataFrame of instructors to randomly pick AM_Instructor.
             n (int | None): Number of course rows. Defaults to None (full catalogue).
 
         Returns:
@@ -105,13 +106,15 @@ class CourseGenerator(BaseGenerator):
 
         target = n if n is not None else len(pool)
         rows: list[dict] = []
+        instructor_ams = professors_df["AM"].tolist()
 
         for idx, (category, title) in enumerate(pool[:target], start=1):
             rows.append({
-                "course_code":  self._regNumber("C", idx, width=4),
-                "title":        title,
-                "category":     category,
-                "description":  self._fake.paragraph(nb_sentences=3),
+                "C_Code":        self._regNumber("C", idx, width=4),
+                "AM_Instructor": random.choice(instructor_ams),
+                "Title":         title,
+                "Description":   self._fake.paragraph(nb_sentences=3),
+                "Category":      category,
             })
 
         return pd.DataFrame(rows)

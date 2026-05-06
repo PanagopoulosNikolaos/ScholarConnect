@@ -6,10 +6,9 @@ from .base_generator import BaseGenerator
 
 class ProfessorGenerator(BaseGenerator):
     """
-    Generates synthetic rows for the Professors table.
+    Generates synthetic rows for the INSTRUCTOR table.
 
-    Each row includes: registration_number, first_name, last_name,
-    email, and specialization.
+    Each row includes: AM, Password, FirstName, LastName, email, Specialization.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
@@ -49,7 +48,7 @@ class ProfessorGenerator(BaseGenerator):
             n (int): Number of professor rows to generate. Defaults to 10.
 
         Returns:
-            pd.DataFrame: DataFrame with columns matching the Professors schema.
+            pd.DataFrame: DataFrame with columns matching the INSTRUCTOR schema.
 
         Raises:
             ValueError: If n is less than 1.
@@ -70,11 +69,17 @@ class ProfessorGenerator(BaseGenerator):
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._regNumber("P", idx),
-                "first_name":          first,
-                "last_name":           last,
+                "AM":                  self._regNumber("P", idx),
+                "Password":            self._fake.password(
+                                           length=16,
+                                           special_chars=True,
+                                           digits=True,
+                                           upper_case=True,
+                                       ),
+                "FirstName":           first,
+                "LastName":            last,
                 "email":               email,
-                "specialization":      random.choice(self._SPECIALIZATIONS),
+                "Specialization":      random.choice(self._SPECIALIZATIONS),
             })
 
         return pd.DataFrame(rows)

@@ -4,17 +4,14 @@ main.py
 Entry point for synthetic data generation in the ScholarConnect project.
 
 Instantiates each generator in foreign-key dependency order, generates all
-seven tables, and prints a summary row count for each — serving as a quick
-smoke-test that confirms the package is wired correctly.
+five tables, and prints a summary row count for each.
 
-Dependency order (mirrors FK constraints from db_relations_diagram.md):
+Dependency order:
     1. Students              -- no dependencies
-    2. Professors            -- no dependencies
-    3. Courses               -- no dependencies
-    4. TeachingAssignments   -- depends on Professors, Courses
-    5. Enrollments           -- depends on Students, Courses
-    6. ProfessorEvaluations  -- depends on Students, Professors
-    7. EvaluationComments    -- depends on ProfessorEvaluations
+    2. Instructors           -- no dependencies
+    3. Courses               -- depends on Instructors
+    4. Enrollments           -- depends on Students, Courses
+    5. Evaluations           -- depends on Students, Courses, Instructors
 """
 
 from . import (
@@ -43,7 +40,7 @@ def main() -> None:
 
     students_df   = StudentGenerator(seed=seed).generate(n=n_students)
     professors_df = ProfessorGenerator(seed=seed).generate(n=n_professors)
-    courses_df    = CourseGenerator(seed=seed).generate(n=n_courses)
+    courses_df    = CourseGenerator(seed=seed).generate(professors_df=professors_df, n=n_courses)
 
     # Relationship / junction tables
 
@@ -54,29 +51,20 @@ def main() -> None:
         seed=seed,
     )
 
-    teaching_df   = rel_gen.generateTeaching(max_courses_per_prof=4)
     enrollments_df = rel_gen.generateEnrollments(
         min_courses_per_student=2,
-        max_courses_per_student=7,
-        grade_null_probability=0.10,
+        max_courses_per_student=7
     )
     evaluations_df = rel_gen.generateEvaluations(evaluation_probability=0.35)
-    comments_df    = rel_gen.generateEvaluationComments(
-        evaluations_df=evaluations_df,
-        max_comments_per_eval=3,
-        comment_probability=0.65,
-    )
 
     # Summary
 
     table_summary = {
-        "Students":             students_df,
-        "Professors":           professors_df,
-        "Courses":              courses_df,
-        "TeachingAssignments":  teaching_df,
-        "Enrollments":          enrollments_df,
-        "ProfessorEvaluations": evaluations_df,
-        "EvaluationComments":   comments_df,
+        "STUDENT": students_df,
+        "INSTRUCTOR": professors_df,
+        "COURSE": courses_df,
+        "ENROLLMENT": enrollments_df,
+        "EVALUATION": evaluations_df,
     }
 
     print("\n--- ScholarConnect Synthetic Data Summary ---")

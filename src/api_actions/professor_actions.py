@@ -1,18 +1,19 @@
 from src.database import getConnection
 
 # Allowed columns for professor updates to prevent SQL errors and protect the primary key.
-PROFESSOR_UPDATE_WHITELIST = {"first_name", "last_name", "email", "specialization"}
+PROFESSOR_UPDATE_WHITELIST = {"FirstName", "LastName", "Password", "email", "Specialization"}
 
-def addProfessor(registration_number, first_name, last_name, email, specialization):
+def addProfessor(AM, Password, FirstName, LastName, email, Specialization):
     """
-    Inserts a new professor record into the database.
+    Inserts a new instructor record into the database.
 
     Args:
-        registration_number (str): The unique professor identifier.
-        first_name (str): The professor's given name.
-        last_name (str): The professor's family name.
-        email (str): Professor's primary contact address.
-        specialization (str): The academic field of expertise.
+        AM (str): The unique instructor identifier.
+        Password (str): Securely stored credential for login.
+        FirstName (str): The instructor's given name.
+        LastName (str): The instructor's family name.
+        email (str): Instructor's primary contact address.
+        Specialization (str): The academic field of expertise.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -21,31 +22,31 @@ def addProfessor(registration_number, first_name, last_name, email, specializati
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO Professors (registration_number, first_name, last_name, email, specialization) VALUES (?, ?, ?, ?, ?)",
-            (registration_number, first_name, last_name, email, specialization)
+            "INSERT INTO INSTRUCTOR (AM, Password, FirstName, LastName, email, Specialization) VALUES (?, ?, ?, ?, ?, ?)",
+            (AM, Password, FirstName, LastName, email, Specialization)
         )
         conn.commit()
         return True
     except Exception as e:
-        print(f"Error adding professor: {e}")
+        print(f"Error adding instructor: {e}")
         return False
     finally:
         conn.close()
 
-def getProfessor(registration_number):
+def getProfessor(AM):
     """
-    Retrieves a professor record by their registration number.
+    Retrieves an instructor record by their registration number.
 
     Args:
-        registration_number (str): The unique professor identifier.
+        AM (str): The unique instructor identifier.
 
     Returns:
-        dict: The professor record as a dictionary, or None if not found.
+        dict: The instructor record as a dictionary, or None if not found.
     """
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Professors WHERE registration_number = ?", (registration_number,))
+        cursor.execute("SELECT * FROM INSTRUCTOR WHERE AM = ?", (AM,))
         row = cursor.fetchone()
         return dict(row) if row else None
     finally:
@@ -53,26 +54,26 @@ def getProfessor(registration_number):
 
 def listProfessors():
     """
-    Retrieves all professor records from the database.
+    Retrieves all instructor records from the database.
 
     Returns:
-        list: A list of dictionaries representing all professors.
+        list: A list of dictionaries representing all instructors.
     """
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Professors")
+        cursor.execute("SELECT * FROM INSTRUCTOR")
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
     finally:
         conn.close()
 
-def updateProfessor(registration_number, **kwargs):
+def updateProfessor(AM, **kwargs):
     """
-    Updates an existing professor record, ignoring invalid keys.
+    Updates an existing instructor record, ignoring invalid keys.
 
     Args:
-        registration_number (str): The unique professor identifier.
+        AM (str): The unique instructor identifier.
         **kwargs: Column names and their new values.
 
     Returns:
@@ -89,26 +90,26 @@ def updateProfessor(registration_number, **kwargs):
         cursor = conn.cursor()
         set_clause = ", ".join([f"{key} = ?" for key in filtered_data.keys()])
         values = list(filtered_data.values())
-        values.append(registration_number)
+        values.append(AM)
         
         cursor.execute(
-            f"UPDATE Professors SET {set_clause} WHERE registration_number = ?",
+            f"UPDATE INSTRUCTOR SET {set_clause} WHERE AM = ?",
             values
         )
         conn.commit()
         return cursor.rowcount > 0
     except Exception as e:
-        print(f"Error updating professor: {e}")
+        print(f"Error updating instructor: {e}")
         return False
     finally:
         conn.close()
 
-def deleteProfessor(registration_number):
+def deleteProfessor(AM):
     """
-    Deletes a professor record from the database.
+    Deletes an instructor record from the database.
 
     Args:
-        registration_number (str): The unique professor identifier to delete.
+        AM (str): The unique instructor identifier to delete.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -116,11 +117,11 @@ def deleteProfessor(registration_number):
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Professors WHERE registration_number = ?", (registration_number,))
+        cursor.execute("DELETE FROM INSTRUCTOR WHERE AM = ?", (AM,))
         conn.commit()
         return cursor.rowcount > 0
     except Exception as e:
-        print(f"Error deleting professor: {e}")
+        print(f"Error deleting instructor: {e}")
         return False
     finally:
         conn.close()

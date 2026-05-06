@@ -14,23 +14,19 @@ import pandas as pd
 
 
 TABLE_TO_CSV: dict[str, str] = {
-    "Students": "Students.csv",
-    "Professors": "Professors.csv",
-    "Courses": "Courses.csv",
-    "TeachingAssignments": "TeachingAssignments.csv",
-    "Enrollments": "Enrollments.csv",
-    "ProfessorEvaluations": "ProfessorEvaluations.csv",
-    "EvaluationComments": "EvaluationComments.csv",
+    "STUDENT": "STUDENT.csv",
+    "INSTRUCTOR": "INSTRUCTOR.csv",
+    "COURSE": "COURSE.csv",
+    "ENROLLMENT": "ENROLLMENT.csv",
+    "EVALUATION": "EVALUATION.csv",
 }
 
 DELETE_ORDER: list[str] = [
-    "EvaluationComments",
-    "ProfessorEvaluations",
-    "Enrollments",
-    "TeachingAssignments",
-    "Courses",
-    "Professors",
-    "Students",
+    "EVALUATION",
+    "ENROLLMENT",
+    "COURSE",
+    "INSTRUCTOR",
+    "STUDENT",
 ]
 
 

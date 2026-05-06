@@ -8,8 +8,8 @@ class StudentGenerator(BaseGenerator):
     """
     Generates synthetic rows for the Students table.
 
-    Each row includes: registration_number, full_name, username,
-    password, and email — mirroring the SQL schema exactly.
+    Each row includes: AM, Password, Username, email, FirstName, LastName
+    mirroring the SQL schema exactly.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
@@ -32,7 +32,7 @@ class StudentGenerator(BaseGenerator):
         """
         Produces a DataFrame of synthetic student records.
 
-        Uniqueness constraints on registration_number, username, and email
+        Uniqueness constraints on AM, Username, and email
         are enforced with a set-based deduplication loop.
 
         Args:
@@ -71,16 +71,17 @@ class StudentGenerator(BaseGenerator):
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._regNumber("S", idx),
-                "full_name":           f"{first} {last}",
-                "username":            username,
-                "password":            self._fake.password(
+                "AM":                  self._regNumber("S", idx),
+                "Password":            self._fake.password(
                                            length=16,
                                            special_chars=True,
                                            digits=True,
                                            upper_case=True,
                                        ),
+                "Username":            username,
                 "email":               email,
+                "FirstName":           first,
+                "LastName":            last,
             })
 
         return pd.DataFrame(rows)

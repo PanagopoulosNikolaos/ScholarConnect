@@ -1,60 +1,49 @@
 PRAGMA foreign_keys = ON;
 
-CREATE TABLE IF NOT EXISTS Students (
-    registration_number TEXT PRIMARY KEY,
-    full_name TEXT NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL
+CREATE TABLE IF NOT EXISTS STUDENT (
+    AM VARCHAR(20) PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Professors (
-    registration_number TEXT PRIMARY KEY,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    specialization TEXT
+CREATE TABLE IF NOT EXISTS INSTRUCTOR (
+    AM VARCHAR(20) PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    Specialization VARCHAR(100)
 );
 
-CREATE TABLE IF NOT EXISTS Courses (
-    course_code TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    category TEXT,
-    description TEXT
+CREATE TABLE IF NOT EXISTS COURSE (
+    C_Code VARCHAR(20) PRIMARY KEY,
+    AM_Instructor VARCHAR(20),
+    Title VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Category VARCHAR(50),
+    FOREIGN KEY (AM_Instructor) REFERENCES INSTRUCTOR(AM)
 );
 
-CREATE TABLE IF NOT EXISTS Enrollments (
-    student_registration_number TEXT NOT NULL,
-    course_code TEXT NOT NULL,
-    grade REAL,
-    enrollment_date TEXT NOT NULL,
-    PRIMARY KEY (student_registration_number, course_code),
-    FOREIGN KEY (student_registration_number) REFERENCES Students(registration_number),
-    FOREIGN KEY (course_code) REFERENCES Courses(course_code)
+CREATE TABLE IF NOT EXISTS ENROLLMENT (
+    AM_Student VARCHAR(20),
+    C_Code VARCHAR(20),
+    StartDate DATE NOT NULL,
+    PRIMARY KEY (AM_Student, C_Code),
+    FOREIGN KEY (AM_Student) REFERENCES STUDENT(AM),
+    FOREIGN KEY (C_Code) REFERENCES COURSE(C_Code)
 );
 
-CREATE TABLE IF NOT EXISTS TeachingAssignments (
-    professor_registration_number TEXT NOT NULL,
-    course_code TEXT NOT NULL,
-    PRIMARY KEY (professor_registration_number, course_code),
-    FOREIGN KEY (professor_registration_number) REFERENCES Professors(registration_number),
-    FOREIGN KEY (course_code) REFERENCES Courses(course_code)
-);
-
-CREATE TABLE IF NOT EXISTS ProfessorEvaluations (
-    student_registration_number TEXT NOT NULL,
-    professor_registration_number TEXT NOT NULL,
-    grade REAL,
-    PRIMARY KEY (student_registration_number, professor_registration_number),
-    FOREIGN KEY (student_registration_number) REFERENCES Students(registration_number),
-    FOREIGN KEY (professor_registration_number) REFERENCES Professors(registration_number)
-);
-
-CREATE TABLE IF NOT EXISTS EvaluationComments (
-    comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_registration_number TEXT NOT NULL,
-    professor_registration_number TEXT NOT NULL,
-    comment_text TEXT NOT NULL,
-    FOREIGN KEY (student_registration_number, professor_registration_number)
-        REFERENCES ProfessorEvaluations(student_registration_number, professor_registration_number)
+CREATE TABLE IF NOT EXISTS EVALUATION (
+    AM_Instructor VARCHAR(20),
+    AM_Student VARCHAR(20),
+    C_Code VARCHAR(20),
+    Rating INTEGER,
+    Comments TEXT,
+    PRIMARY KEY (AM_Instructor, AM_Student, C_Code),
+    FOREIGN KEY (AM_Instructor) REFERENCES INSTRUCTOR(AM),
+    FOREIGN KEY (AM_Student) REFERENCES STUDENT(AM),
+    FOREIGN KEY (C_Code) REFERENCES COURSE(C_Code)
 );

@@ -1,18 +1,19 @@
 from src.database import getConnection
 
 # Allowed columns for student updates to prevent SQL errors and protect the primary key.
-STUDENT_UPDATE_WHITELIST = {"full_name", "username", "password", "email"}
+STUDENT_UPDATE_WHITELIST = {"FirstName", "LastName", "Username", "Password", "email"}
 
-def addStudent(registration_number, full_name, username, password, email):
+def addStudent(AM, Password, Username, email, FirstName, LastName):
     """
     Inserts a new student record into the database.
 
     Args:
-        registration_number (str): The unique student identifier.
-        full_name (str): The full name of the student.
-        username (str): Unique name used for authentication.
-        password (str): Securely stored credential for login.
+        AM (str): The unique student identifier.
+        Password (str): Securely stored credential for login.
+        Username (str): Unique name used for authentication.
         email (str): Student's primary contact address.
+        FirstName (str): The student's given name.
+        LastName (str): The student's family name.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -21,8 +22,8 @@ def addStudent(registration_number, full_name, username, password, email):
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO Students (registration_number, full_name, username, password, email) VALUES (?, ?, ?, ?, ?)",
-            (registration_number, full_name, username, password, email)
+            "INSERT INTO STUDENT (AM, Password, Username, email, FirstName, LastName) VALUES (?, ?, ?, ?, ?, ?)",
+            (AM, Password, Username, email, FirstName, LastName)
         )
         conn.commit()
         return True
@@ -32,12 +33,12 @@ def addStudent(registration_number, full_name, username, password, email):
     finally:
         conn.close()
 
-def getStudent(registration_number):
+def getStudent(AM):
     """
     Retrieves a student record by their registration number.
 
     Args:
-        registration_number (str): The unique student identifier.
+        AM (str): The unique student identifier.
 
     Returns:
         dict: The student record as a dictionary, or None if not found.
@@ -45,7 +46,7 @@ def getStudent(registration_number):
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Students WHERE registration_number = ?", (registration_number,))
+        cursor.execute("SELECT * FROM STUDENT WHERE AM = ?", (AM,))
         row = cursor.fetchone()
         return dict(row) if row else None
     finally:
@@ -61,18 +62,18 @@ def listStudents():
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Students")
+        cursor.execute("SELECT * FROM STUDENT")
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
     finally:
         conn.close()
 
-def updateStudent(registration_number, **kwargs):
+def updateStudent(AM, **kwargs):
     """
     Updates an existing student record, ignoring invalid keys.
 
     Args:
-        registration_number (str): The unique student identifier.
+        AM (str): The unique student identifier.
         **kwargs: Column names and their new values.
 
     Returns:
@@ -89,10 +90,10 @@ def updateStudent(registration_number, **kwargs):
         cursor = conn.cursor()
         set_clause = ", ".join([f"{key} = ?" for key in filtered_data.keys()])
         values = list(filtered_data.values())
-        values.append(registration_number)
+        values.append(AM)
         
         cursor.execute(
-            f"UPDATE Students SET {set_clause} WHERE registration_number = ?",
+            f"UPDATE STUDENT SET {set_clause} WHERE AM = ?",
             values
         )
         conn.commit()
@@ -103,12 +104,12 @@ def updateStudent(registration_number, **kwargs):
     finally:
         conn.close()
 
-def deleteStudent(registration_number):
+def deleteStudent(AM):
     """
     Deletes a student record from the database.
 
     Args:
-        registration_number (str): The unique student identifier to delete.
+        AM (str): The unique student identifier to delete.
 
     Returns:
         bool: True if the operation was successful, False otherwise.
@@ -116,7 +117,7 @@ def deleteStudent(registration_number):
     conn = getConnection()
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Students WHERE registration_number = ?", (registration_number,))
+        cursor.execute("DELETE FROM STUDENT WHERE AM = ?", (AM,))
         conn.commit()
         return cursor.rowcount > 0
     except Exception as e:
