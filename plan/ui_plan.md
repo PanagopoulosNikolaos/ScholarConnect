@@ -1,96 +1,94 @@
-# ScholarConnect UI Plan (Base)
+# ScholarConnect UI Plan (NiceGUI Web App)
 
 ## Goal
 
-Deliver a very simple interactive client for SQLite-backed authentication flows:
+Deliver a responsive, rich web-based interface for the ScholarConnect platform, allowing users to manage academic data through a modern browser experience:
 
-1. Manual account creation
-2. Login
-3. Logout
+1.  **Dashboard**: High-level statistics and system overview.
+2.  **Authentication**: Secure login, registration, and logout flows.
+3.  **Data Management**: Full CRUD operations for Students, Instructors, Courses, Enrollments, and Evaluations.
 
 ## Chosen Direction
 
-Build a **Python TUI (terminal user interface)** as the MVP.
+Build a **Web GUI** using **NiceGUI** (Python framework).
 
-Reasoning:
-- Lower complexity than web (no browser/frontend stack).
-- Better UX than plain shell prompts.
-- Easy to run for all team members through conda (`py14`).
+### Reasoning
+- **Unified Stack**: Logic and UI are both written in Python, reducing context switching and deployment complexity.
+- **Rich Components**: Built on top of Quasar and Vue.js, providing premium-feeling elements (tables, dialogs, charts) out of the box.
+- **Fast Iteration**: Real-time reloading and direct access to backend `api_actions` without intermediate REST/GraphQL layers.
+- **Responsive Design**: Mobile-friendly layouts by default.
 
-## Scope (MVP)
+## Scope
 
 ### In Scope
-- Account creation form
-- Login form
-- Logout action
-- Basic authenticated home screen
-- SQLite persistence
-- Password hashing and verification
+- **Interactive Dashboard**: Visual cards showing total counts of students, professors, and courses.
+- **Entity Tables**: Searchable, sortable tables for all primary entities.
+- **CRUD Dialogs**: Modal forms for adding and editing records with validation.
+- **Authentication Flow**:
+    - Dedicated Login and Registration pages.
+    - Session-based access control.
+    - Persistent logout action in the sidebar.
+- **State Management**: Using `app.storage` for user sessions.
 
-### Out of Scope (for now)
-- Full course management flows
-- Rich dashboards/charts
-- HTTP API and browser frontend
-- Role-based authorization matrix
+### Out of Scope
+- **Complex Analytics**: Advanced data visualization or export (PDF/Excel).
+- **Public API**: External HTTP access for third-party integrations.
+- **Theme Customizer**: Allowing users to change primary colors (locked to dark mode for MVP).
 
 ## Proposed Structure
 
-```
+```text
 src/
   app/
-    tui/
-      main.py
-      screens/
-        welcome_screen.py
-        login_screen.py
-        register_screen.py
-        home_screen.py
-    services/
-      auth_service.py
-      account_service.py
-    db/
-      sqlite.py
-      queries.py
+    ui/
+      main.py           # Application entry point and routing
+      pages/
+        dashboard.py    # Main landing page
+        auth.py         # Login and registration screens
+        students.py     # Student management
+        professors.py   # Instructor management
+        courses.py      # Course and Enrollment management
+      components/
+        sidebar.py      # Shared navigation component
+        forms.py        # Reusable form elements
+        tables.py       # Customized data table wrappers
+  api_actions/          # Backend business logic (shared logic)
+  database.py           # SQLite connection management
 ```
 
-## Data Strategy
+## Data & Auth Strategy
 
-- Use SQLite (`db/scholarconnect.sqlite3`) as the source of truth.
-- Keep login lookups on indexed unique fields (`username`, `email`).
-- Use parameterized SQL only.
-- Keep a simple in-memory session object for current logged-in user in the TUI process.
-
-## Auth Rules (MVP)
-
-- Account creation requires:
-  - unique username
-  - unique email
-  - password with minimum length
-- Login accepts username + password.
-- Passwords are never stored in plain text.
-- Logout clears the in-memory session state.
+- **Backend**: Direct calls to `src/api_actions/` modules.
+- **Session**: Use `nicegui.app.storage.user` to track authentication status and AM (Identity).
+- **Validation**: Client-side validation via NiceGUI component props (`rules`, `validation`) and server-side checks in service layers.
+- **Persistence**: SQLite remains the source of truth; no client-side database caching.
 
 ## Implementation Phases
 
-1. **Foundation**
-   - Add UI dependencies and app entry point.
-   - Add DB connection helper and query module.
-2. **Auth Services**
-   - Implement create account, login verification, logout/session handling.
-3. **TUI Screens**
-   - Build welcome/login/register/home screens and navigation.
-4. **Hardening**
-   - Input validation, clear error messages, and basic smoke tests.
-5. **Docs**
-   - Update root README with run instructions and UX flow.
+1.  **Foundation (Completed)**
+    - Initialize NiceGUI and establish routing.
+    - Build `ui_preview.py` prototype with Dashboard and basic CRUD tables.
+2.  **Authentication & Security (Next)**
+    - Implement `auth_service` for session handling.
+    - Build Login/Register pages.
+    - Add page-level decorators for access control.
+3.  **Feature Parity & Refactoring**
+    - Migrate logic from `ui_preview.py` into structured modules (`src/app/ui/pages/`).
+    - Finalize Enrollments and Evaluations management screens.
+4.  **UX Hardening**
+    - Add meaningful notifications for all actions.
+    - Implement confirmation dialogs for deletions.
+    - Refine table column layouts and search filters.
+5.  **Documentation**
+    - Update root README with setup and run instructions for the web app.
 
-## Run Target (planned)
+## Run Target
 
 ```bash
-conda run -n py14 python -m src.app.tui.main
+conda run -n py14 python -m src.app.ui.main
 ```
 
 ## Notes
 
-- Keep UI logic and DB/auth logic separated from day one.
-- TUI-first does not block future migration to web; service modules can be reused behind an API later.
+- The current `src/ui_preview.py` serves as the functional reference for the final modular implementation.
+- All UI actions must handle database exceptions gracefully to prevent application crashes.

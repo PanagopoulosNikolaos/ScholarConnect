@@ -21,6 +21,30 @@ from .professor_actions import (
     deleteProfessor,
 )
 
+from .course_actions import (
+    addCourse,
+    getCourse,
+    listCourses,
+    updateCourse,
+    deleteCourse,
+)
+
+from .enrollment_actions import (
+    addEnrollment,
+    getEnrollment,
+    listEnrollments,
+    updateEnrollment,
+    deleteEnrollment,
+)
+
+from .evaluation_actions import (
+    addEvaluation,
+    getEvaluation,
+    listEvaluations,
+    updateEvaluation,
+    deleteEvaluation,
+)
+
 __all__ = [
     "addStudent",
     "getStudent",
@@ -32,4 +56,19 @@ __all__ = [
     "listProfessors",
     "updateProfessor",
     "deleteProfessor",
+    "addCourse",
+    "getCourse",
+    "listCourses",
+    "updateCourse",
+    "deleteCourse",
+    "addEnrollment",
+    "getEnrollment",
+    "listEnrollments",
+    "updateEnrollment",
+    "deleteEnrollment",
+    "addEvaluation",
+    "getEvaluation",
+    "listEvaluations",
+    "updateEvaluation",
+    "deleteEvaluation",
 ]

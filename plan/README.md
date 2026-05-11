@@ -5,7 +5,7 @@ This directory contains the strategic development roadmap, tracking tables, and 
 ## Plan Files
 
 - [`plan.md`](./plan.md) — Main project roadmap by phase.
-- [`ui_plan.md`](./ui_plan.md) — Base implementation plan for the first interactive UI (TUI-first).
+- [`ui_plan.md`](./ui_plan.md) — Comprehensive NiceGUI web application plan.
 - [`rules.md`](./rules.md) — Project language/style rules.
 
 ## Project Track Table
@@ -16,5 +16,6 @@ This table tracks the high-level progress of the ScholarConnect development phas
 | :--- | :--- | :--- |
 | **Phase 1** | Database Initialization & Schema Design | Completed |
 | **Phase 2** | Data Engineering & Synthetic Data Generation | In Progress |
-| **Phase 3** | Backend Development & API Implementation | In Progress |
-| **Phase 4** | UI Development & System Integration | Pending |
+| **Phase 3** | Backend Development & API Implementation | Completed |
+| **Phase 4** | UI Development (NiceGUI) | In Progress |
+| **Phase 5** | Hardening & Handover (Other Team Members) | Pending |

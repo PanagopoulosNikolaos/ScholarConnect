@@ -9,7 +9,7 @@ This document outlines the strategic roadmap for ScholarConnect, a comprehensive
 
 | Task | Description | Status |
 | :--- | :--- | :--- |
-| **SQL Schema Implementation** | Create the DDL script to define tables for `Students`, `Professors`, `Courses`, `Enrollments`, `TeachingAssignments`, `ProfessorEvaluations`, and `EvaluationComments`. | Completed |
+| **SQL Schema Implementation** | Create the DDL script to define tables for `Students`, `Instructors`, `Courses`, `Enrollments`, and `Evaluations`. | Completed |
 | **Integrity Constraints** | Define primary/foreign keys and constraints (e.g., UNIQUE email, CHECK constraints for grades). | Completed |
 
 ---
@@ -37,26 +37,24 @@ This document outlines the strategic roadmap for ScholarConnect, a comprehensive
 | **Seeding Order Optimization** | Ensure the seeding process respects table dependencies and relational constraints. | Completed |
 | **Student CRUD Actions** | Data-access functions for creating, reading, updating, and deleting student records. | Completed |
 | **Professor CRUD Actions** | Data-access functions for creating, reading, updating, and deleting professor records. | Completed |
-| **Course CRUD Actions** | Data-access functions for creating, reading, updating, and deleting course records. | Pending |
-| **Enrollment CRUD Actions** | Data-access functions for enrollments (join table with grade). | Pending |
+| **Course CRUD Actions** | Data-access functions for creating, reading, updating, and deleting course records. | Completed |
+| **Enrollment CRUD Actions** | Data-access functions for enrollments (join table with grade). | Completed |
+| **Evaluation CRUD Actions** | Data-access functions for evaluations/reviews. | Completed |
 | **Course Management Logic** | Logic for assigning professors to courses and enrolling students. | Pending |
+| **Password Hashing** | Hash passwords on insert/update in student and professor CRUD actions (bcrypt/passlib). | Team Mate |
 
 ---
 
-## Phase 4: UI — Decision Pending
-**Objective:** Deliver a user-facing interface.
+## Phase 4: UI Implementation
+**Objective:** Deliver a user-facing interface via NiceGUI (web-based).
 
-> **No final decision has been made yet.** The team and PM need to agree on which direction to take. The `plan/ui_plan.md` file contains a TUI-only draft that may be scrapped or expanded once a decision is reached.
->
-> **Options:**
-> - **TUI (Terminal)** — Fastest MVP. Uses Python stdlib. Can call `api_actions/` functions directly — no HTTP API needed.
-> - **GUI (Desktop, e.g. PyQt/Tkinter)** — More polished but heavier. Still calls Python directly.
-> - **Web-app (FastAPI + React/etc.)** — Most flexible. Requires building REST endpoints and a frontend framework.
+Chosen framework: **NiceGUI** — simplest path to a functional web UI that can call `api_actions/` functions directly without building an HTTP API layer.
 
 | Task | Description | Status |
 | :--- | :--- | :--- |
-| **UI Planning & Decision** | Meet with team and PM to decide on TUI / GUI / Web-app. | In Progress |
-| **UI Implementation** | Build the chosen interface. | Pending |
+| **UI Preview Prototype** | Functional NiceGUI preview with dashboard, CRUD tables for all entities, sidebar navigation, and dark mode. | Completed |
+| **Authentication Screens** | Login/register/logout flows with session management. | Pending |
+| **UI Hardening** | Input validation, error handling, UX polish. | Pending |
 | **Documentation Update** | Update root README with run instructions and UX flow. | Pending |
 
 ---
