@@ -40,7 +40,7 @@ This document outlines the strategic roadmap for ScholarConnect, a comprehensive
 | **Course CRUD Actions** | Data-access functions for creating, reading, updating, and deleting course records. | Completed |
 | **Enrollment CRUD Actions** | Data-access functions for enrollments (join table with grade). | Completed |
 | **Evaluation CRUD Actions** | Data-access functions for evaluations/reviews. | Completed |
-| **Course Management Logic** | Logic for assigning professors to courses and enrolling students. | Pending |
+| **Course Management Logic** | Logic for assigning professors to courses and enrolling students. | Completed |
 | **Password Hashing** | Hash passwords on insert/update in student and professor CRUD actions (bcrypt/passlib). | Team Mate |
 
 ---

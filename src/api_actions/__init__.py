@@ -45,6 +45,18 @@ from .evaluation_actions import (
     deleteEvaluation,
 )
 
+from .course_management import (
+    assignProfessorToCourse,
+    removeProfessorFromCourse,
+    enrollStudentInCourse,
+    withdrawStudentFromCourse,
+    getCourseRoster,
+    getProfessorCourseLoad,
+    getStudentSchedule,
+    listAvailableStudents,
+    listAvailableCourses,
+)
+
 __all__ = [
     "addStudent",
     "getStudent",
@@ -71,4 +83,13 @@ __all__ = [
     "listEvaluations",
     "updateEvaluation",
     "deleteEvaluation",
+    "assignProfessorToCourse",
+    "removeProfessorFromCourse",
+    "enrollStudentInCourse",
+    "withdrawStudentFromCourse",
+    "getCourseRoster",
+    "getProfessorCourseLoad",
+    "getStudentSchedule",
+    "listAvailableStudents",
+    "listAvailableCourses",
 ]
