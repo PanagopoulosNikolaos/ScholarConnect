@@ -153,12 +153,12 @@ def dashboard():
 def students():
     """
     Renders the student management page with a data table and CRUD dialogs.
+    Username is not shown separately because it mirrors the AM.
     """
     _sidebar()
 
     cols = [
         {"name": "am", "label": "AM", "field": "am", "sortable": True},
-        {"name": "username", "label": "Username", "field": "username", "sortable": True},
         {"name": "first", "label": "First Name", "field": "first"},
         {"name": "last", "label": "Last Name", "field": "last"},
         {"name": "email", "label": "Email", "field": "email"},
@@ -170,7 +170,7 @@ def students():
         """Reloads student data into the table."""
         rows = listStudents()
         table.rows = [
-            {"id": s["AM"], "am": s["AM"], "username": s["Username"],
+            {"id": s["AM"], "am": s["AM"],
              "first": s["FirstName"], "last": s["LastName"], "email": s["email"]}
             for s in rows
         ]
@@ -183,27 +183,26 @@ def students():
         with ui.dialog() as d, ui.card().classes("w-96"):
             ui.label("Add Student").classes("text-lg font-bold")
             am = ui.input("AM")
-            uname = ui.input("Username")
             first = ui.input("First Name")
             last = ui.input("Last Name")
             email = ui.input("Email")
             pw = ui.input("Password", password_toggle_button=True)
             with ui.row():
                 ui.button("Save", on_click=lambda: _doAdd(
-                    d, am, pw, uname, email, first, last
+                    d, am, pw, email, first, last
                 )).props("color=primary")
                 ui.button("Cancel", on_click=d.close)
         d.open()
 
-    def _doAdd(d, am, pw, uname, email, first, last):
-        ok = addStudent(am.value, pw.value, uname.value, email.value,
+    def _doAdd(d, am, pw, email, first, last):
+        ok = addStudent(am.value, pw.value, email.value,
                         first.value, last.value)
         if ok:
             _notify("Student added")
             d.close()
             refresh()
         else:
-            _notify("Failed to add student (AM/Username/Email may already exist)", "negative")
+            _notify("Failed to add student (AM/Email may already exist)", "negative")
 
     # -- Edit dialog --
     def editDialog(row):
@@ -213,22 +212,19 @@ def students():
         with ui.dialog() as d, ui.card().classes("w-96"):
             ui.label("Edit Student").classes("text-lg font-bold")
             ui.label(f"AM: {s['AM']}").classes("text-sm text-grey")
-            uname = ui.input("Username", value=s["Username"])
             first = ui.input("First Name", value=s["FirstName"])
             last = ui.input("Last Name", value=s["LastName"])
             email = ui.input("Email", value=s["email"])
             pw = ui.input("Password (leave blank to keep)", password_toggle_button=True)
             with ui.row():
                 ui.button("Update", on_click=lambda: _doEdit(
-                    d, s["AM"], uname, first, last, email, pw
+                    d, s["AM"], first, last, email, pw
                 )).props("color=warning")
                 ui.button("Cancel", on_click=d.close)
         d.open()
 
-    def _doEdit(d, am, uname, first, last, email, pw):
+    def _doEdit(d, am, first, last, email, pw):
         kwargs = {}
-        if uname.value:
-            kwargs["Username"] = uname.value
         if first.value:
             kwargs["FirstName"] = first.value
         if last.value:
@@ -275,12 +271,12 @@ def students():
 def professors():
     """
     Renders the instructor management page with a data table and CRUD dialogs.
+    Username is not shown separately because it mirrors the AM.
     """
     _sidebar()
 
     cols = [
         {"name": "am", "label": "AM", "field": "am", "sortable": True},
-        {"name": "username", "label": "Username", "field": "username", "sortable": True},
         {"name": "first", "label": "First Name", "field": "first"},
         {"name": "last", "label": "Last Name", "field": "last"},
         {"name": "email", "label": "Email", "field": "email"},
@@ -293,7 +289,7 @@ def professors():
         """Reloads instructor data into the table."""
         rows = listProfessors()
         table.rows = [
-            {"id": p["AM"], "am": p["AM"], "username": p["Username"],
+            {"id": p["AM"], "am": p["AM"],
              "first": p["FirstName"], "last": p["LastName"],
              "email": p["email"], "spec": p["Specialization"]}
             for p in rows
@@ -306,7 +302,6 @@ def professors():
         with ui.dialog() as d, ui.card().classes("w-96"):
             ui.label("Add Instructor").classes("text-lg font-bold")
             am = ui.input("AM")
-            uname = ui.input("Username")
             first = ui.input("First Name")
             last = ui.input("Last Name")
             email = ui.input("Email")
@@ -314,13 +309,13 @@ def professors():
             pw = ui.input("Password", password_toggle_button=True)
             with ui.row():
                 ui.button("Save", on_click=lambda: _doAdd(
-                    d, am, pw, uname, first, last, email, spec
+                    d, am, pw, first, last, email, spec
                 )).props("color=primary")
                 ui.button("Cancel", on_click=d.close)
         d.open()
 
-    def _doAdd(d, am, pw, uname, first, last, email, spec):
-        ok = addProfessor(am.value, pw.value, uname.value, first.value,
+    def _doAdd(d, am, pw, first, last, email, spec):
+        ok = addProfessor(am.value, pw.value, first.value,
                           last.value, email.value, spec.value)
         if ok:
             _notify("Instructor added")
@@ -336,7 +331,6 @@ def professors():
         with ui.dialog() as d, ui.card().classes("w-96"):
             ui.label("Edit Instructor").classes("text-lg font-bold")
             ui.label(f"AM: {p['AM']}").classes("text-sm text-grey")
-            uname = ui.input("Username", value=p["Username"])
             first = ui.input("First Name", value=p["FirstName"])
             last = ui.input("Last Name", value=p["LastName"])
             email = ui.input("Email", value=p["email"])
@@ -344,15 +338,13 @@ def professors():
             pw = ui.input("Password (leave blank to keep)", password_toggle_button=True)
             with ui.row():
                 ui.button("Update", on_click=lambda: _doEdit(
-                    d, p["AM"], uname, first, last, email, spec, pw
+                    d, p["AM"], first, last, email, spec, pw
                 )).props("color=warning")
                 ui.button("Cancel", on_click=d.close)
         d.open()
 
-    def _doEdit(d, am, uname, first, last, email, spec, pw):
+    def _doEdit(d, am, first, last, email, spec, pw):
         kwargs = {}
-        if uname.value:
-            kwargs["Username"] = uname.value
         if first.value:
             kwargs["FirstName"] = first.value
         if last.value:
@@ -598,7 +590,7 @@ def evaluations():
             instr = ui.input("Instructor AM")
             student = ui.input("Student AM")
             course = ui.input("Course Code")
-            rating = ui.number("Rating (1-5)", min=1, max=5, value=5)
+            rating = ui.number("Rating (1-10)", min=1, max=10, value=10)
             comments = ui.textarea("Comments")
             with ui.row():
                 ui.button("Save", on_click=lambda: _doAdd(

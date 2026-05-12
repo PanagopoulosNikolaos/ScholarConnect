@@ -1,16 +1,16 @@
 from src.database import getConnection
 
 # Allowed columns for professor updates to prevent SQL errors and protect the primary key.
-PROFESSOR_UPDATE_WHITELIST = {"FirstName", "LastName", "Username", "Password", "email", "Specialization"}
+# Username is intentionally excluded because it mirrors AM.
+PROFESSOR_UPDATE_WHITELIST = {"FirstName", "LastName", "Password", "email", "Specialization"}
 
-def addProfessor(AM, Password, Username, FirstName, LastName, email, Specialization):
+def addProfessor(AM, Password, FirstName, LastName, email, Specialization):
     """
-    Inserts a new instructor record into the database.
+    Inserts a new instructor record into the database.  Username is set to AM internally.
 
     Args:
         AM (str): The unique instructor identifier.
         Password (str): Securely stored credential for login.
-        Username (str): Unique handle for login.
         FirstName (str): The instructor's given name.
         LastName (str): The instructor's family name.
         email (str): Instructor's primary contact address.
@@ -24,7 +24,7 @@ def addProfessor(AM, Password, Username, FirstName, LastName, email, Specializat
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO INSTRUCTOR (AM, Password, Username, FirstName, LastName, email, Specialization) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (AM, Password, Username, FirstName, LastName, email, Specialization)
+            (AM, Password, AM, FirstName, LastName, email, Specialization)
         )
         conn.commit()
         return True
@@ -82,17 +82,17 @@ def updateProfessor(AM, **kwargs):
     """
     # Filter kwargs against the whitelist.
     filtered_data = {k: v for k, v in kwargs.items() if k in PROFESSOR_UPDATE_WHITELIST}
-    
+
     if not filtered_data:
         return False
-    
+
     conn = getConnection()
     try:
         cursor = conn.cursor()
         set_clause = ", ".join([f"{key} = ?" for key in filtered_data.keys()])
         values = list(filtered_data.values())
         values.append(AM)
-        
+
         cursor.execute(
             f"UPDATE INSTRUCTOR SET {set_clause} WHERE AM = ?",
             values

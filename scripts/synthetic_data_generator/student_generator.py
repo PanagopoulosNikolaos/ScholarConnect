@@ -1,5 +1,3 @@
-
-import random
 import pandas as pd
 from .base_generator import BaseGenerator
 
@@ -9,15 +7,13 @@ class StudentGenerator(BaseGenerator):
     Generates synthetic rows for the Students table.
 
     Each row includes: AM, Password, Username, email, FirstName, LastName
-    mirroring the SQL schema exactly.
+    mirroring the SQL schema exactly.  Username is set equal to AM so
+    the registration number doubles as the login handle.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
         generate    -- Returns a DataFrame of n student rows.
     """
-
-    # Academic-domain usernames keep a realistic feel.
-    _username_suffixes = ["_uni", "_stud", "2024", "2025", "_sc", ""]
 
     def __init__(self, seed: int | None = None) -> None:
         """
@@ -32,8 +28,8 @@ class StudentGenerator(BaseGenerator):
         """
         Produces a DataFrame of synthetic student records.
 
-        Uniqueness constraints on AM, Username, and email
-        are enforced with a set-based deduplication loop.
+        Uniqueness constraints on AM and email are enforced with a
+        set-based deduplication loop.
 
         Args:
             n (int): Number of student rows to generate. Defaults to 50.
@@ -47,7 +43,6 @@ class StudentGenerator(BaseGenerator):
         if n < 1:
             raise ValueError("n must be at least 1.")
 
-        seen_usernames: set[str] = set()
         seen_emails: set[str] = set()
         rows: list[dict] = []
 
@@ -55,14 +50,7 @@ class StudentGenerator(BaseGenerator):
             first = self._fake.first_name()
             last  = self._fake.last_name()
 
-            # Build a unique username derived from the person's name.
-            base_uname = f"{first.lower()}.{last.lower()}"
-            suffix     = random.choice(self._username_suffixes)
-            username   = f"{base_uname}{suffix}"
-            # Append a counter suffix when collisions occur.
-            while username in seen_usernames:
-                username = f"{base_uname}{suffix}{random.randint(1, 999)}"
-            seen_usernames.add(username)
+            am = self._regNumber("S", idx)
 
             # Generate a unique email address.
             email = self._fake.email()
@@ -71,14 +59,14 @@ class StudentGenerator(BaseGenerator):
             seen_emails.add(email)
 
             rows.append({
-                "AM":                  self._regNumber("S", idx),
+                "AM":                  am,
                 "Password":            self._fake.password(
                                            length=16,
                                            special_chars=True,
                                            digits=True,
                                            upper_case=True,
                                        ),
-                "Username":            username,
+                "Username":            am,
                 "email":               email,
                 "FirstName":           first,
                 "LastName":            last,

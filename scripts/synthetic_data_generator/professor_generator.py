@@ -1,4 +1,3 @@
-
 import random
 import pandas as pd
 from .base_generator import BaseGenerator
@@ -9,6 +8,7 @@ class ProfessorGenerator(BaseGenerator):
     Generates synthetic rows for the INSTRUCTOR table.
 
     Each row includes: AM, Password, Username, FirstName, LastName, email, Specialization.
+    Username is set equal to AM so the registration number doubles as the login handle.
 
     Functions:
         __init__    -- Initialises the generator with an optional seed.
@@ -63,20 +63,22 @@ class ProfessorGenerator(BaseGenerator):
             first = self._fake.first_name()
             last  = self._fake.last_name()
 
+            am = self._regNumber("P", idx)
+
             email = self._fake.email()
             while email in seen_emails:
                 email = self._fake.email()
             seen_emails.add(email)
 
             rows.append({
-                "AM":                  self._regNumber("P", idx),
+                "AM":                  am,
                 "Password":            self._fake.password(
                                            length=16,
                                            special_chars=True,
                                            digits=True,
                                            upper_case=True,
                                        ),
-                "Username":            self._fake.user_name() + str(idx),
+                "Username":            am,
                 "FirstName":           first,
                 "LastName":            last,
                 "email":               email,

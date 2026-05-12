@@ -1,16 +1,16 @@
 from src.database import getConnection
 
 # Allowed columns for student updates to prevent SQL errors and protect the primary key.
-STUDENT_UPDATE_WHITELIST = {"FirstName", "LastName", "Username", "Password", "email"}
+# Username is intentionally excluded because it mirrors AM.
+STUDENT_UPDATE_WHITELIST = {"FirstName", "LastName", "Password", "email"}
 
-def addStudent(AM, Password, Username, email, FirstName, LastName):
+def addStudent(AM, Password, email, FirstName, LastName):
     """
-    Inserts a new student record into the database.
+    Inserts a new student record into the database.  Username is set to AM internally.
 
     Args:
         AM (str): The unique student identifier.
         Password (str): Securely stored credential for login.
-        Username (str): Unique name used for authentication.
         email (str): Student's primary contact address.
         FirstName (str): The student's given name.
         LastName (str): The student's family name.
@@ -23,7 +23,7 @@ def addStudent(AM, Password, Username, email, FirstName, LastName):
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO STUDENT (AM, Password, Username, email, FirstName, LastName) VALUES (?, ?, ?, ?, ?, ?)",
-            (AM, Password, Username, email, FirstName, LastName)
+            (AM, Password, AM, email, FirstName, LastName)
         )
         conn.commit()
         return True
@@ -81,17 +81,17 @@ def updateStudent(AM, **kwargs):
     """
     # Filter kwargs against the whitelist.
     filtered_data = {k: v for k, v in kwargs.items() if k in STUDENT_UPDATE_WHITELIST}
-    
+
     if not filtered_data:
         return False
-    
+
     conn = getConnection()
     try:
         cursor = conn.cursor()
         set_clause = ", ".join([f"{key} = ?" for key in filtered_data.keys()])
         values = list(filtered_data.values())
         values.append(AM)
-        
+
         cursor.execute(
             f"UPDATE STUDENT SET {set_clause} WHERE AM = ?",
             values
