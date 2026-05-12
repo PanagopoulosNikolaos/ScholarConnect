@@ -9,15 +9,15 @@
 | [StudentGenerator.generate](#generate) | Function | Produces a DataFrame of synthetic student records. |
 
 ## Overview
-This file contains the `StudentGenerator` class which creates records corresponding to the Students table schema. By extending `BaseGenerator`, it utilizes shared dependencies while crafting deterministic identifiers representing structured usernames and email addresses.
+This file contains the `StudentGenerator` class which creates records corresponding to the Students table schema. By extending `BaseGenerator`, it utilizes shared dependencies while crafting deterministic identifiers (AM), equating the username to the AM, and verifying unique email addresses.
 
 ## Detailed Breakdown
 
 ## StudentGenerator
 
-**Class Responsibility:** Constructs structured dictionary rows mapping synthetic user objects modeling academic environments. Implements unique constraint protections evaluating previous identities preventing key-duplicates over emails or usernames within generations.
+**Class Responsibility:** Constructs structured dictionary rows mapping synthetic student objects. Implements uniqueness constraint protections evaluating previous identities preventing key-duplicates over emails, and directly maps Username to AM for academic login realism.
 
-### __init__
+### Constructor
 
 **Signature:**
 ```python
@@ -34,7 +34,7 @@ def __init__(self, seed: int | None = None) -> None
 **Returns:**
 | Type | Description |
 |------|-------------|
-| None | Returns nothing |
+| return_type | Returns nothing (None) |
 
 **Source Code:**
 ```python
@@ -51,13 +51,14 @@ def __init__(self, seed: int | None = None) -> None
 |--------|------|---------|--------|
 | BaseGenerator | Internal | Inheritance foundation | .base_generator |
 
+
 ### generate
 
 **Primary Library:** `pandas`  
 **Purpose:** Produces a DataFrame of synthetic student records.
 
 #### Overview
-Computes user data iterations establishing secure passwords, domain formatting, and randomized credentials representing student interactions. Implements multiple `while` loops guaranteeing `username` and `email` properties never encounter uniqueness collisions internally.
+Computes user data iterations establishing secure passwords, name formatting, and randomized credentials representing student records. Implements a `while` loop guaranteeing `email` properties never encounter uniqueness collisions internally, and sets `Username` to `AM`.
 
 #### Signature
 ```python
@@ -80,7 +81,7 @@ def generate(self, n: int = 50) -> pd.DataFrame
 | ValueError | Input `n` lies below `1` minimal threshold |
 
 #### Dependencies
-* **Required Libraries:** `pandas`, `random`
+* **Required Libraries:** `pandas`
 * **Internal Modules:** `self._regNumber`
 
 #### Workflow (Executable Logic Only)
@@ -88,24 +89,23 @@ def generate(self, n: int = 50) -> pd.DataFrame
 **Phase 1: Generation Limits and Set Instantiation**
 Validates minimum limit bounds and prepares structures to filter uniqueness metrics.
 * **Operation 1:** Throws `ValueError` exception for misconfigured arguments.
-* **Operation 2:** Initializes sets `seen_usernames` and `seen_emails` monitoring history tables. Sets array list `rows`.
+* **Operation 2:** Initializes set `seen_emails` for uniqueness checks and array list `rows`.
 
 *Code Context:*
 ```python
         if n < 1:
             raise ValueError("n must be at least 1.")
 
-        seen_usernames: set[str] = set()
         seen_emails: set[str] = set()
         rows: list[dict] = []
 ```
 
 **Phase 2: Entity Property Population**
 Builds attributes string values per student iterative component mapping.
-* **Operation 1:** Derives `first_name` and `last_name` faker structures.
-* **Operation 2:** Calculates deterministic usernames utilizing generated names, looping conditionally `username in seen_usernames` avoiding collision artifacts via integer appendages. Records established ID.
+* **Operation 1:** Derives `first` and `last` name from Faker structures.
+* **Operation 2:** Generates an `am` (Registration Number) utilizing `self._regNumber`.
 * **Operation 3:** Formulates similarly protected constraints dictating generic email fields looping duplicate conditions explicitly tracking.
-* **Operation 4:** Compiles dictionaries assigning primary key indexes using helper functions. Configures passwords utilizing Faker library length constraints adding uppercase/digits properties explicitly. Appends row structure.
+* **Operation 4:** Compiles dictionaries assigning exact Student schema properties (AM, Password, Username, email, FirstName, LastName), specifically setting `Username` equivalent to `am`. Configures passwords utilizing Faker library length constraints. Appends row structure.
 
 *Code Context:*
 ```python
@@ -113,54 +113,7 @@ Builds attributes string values per student iterative component mapping.
             first = self._fake.first_name()
             last  = self._fake.last_name()
 
-            base_uname = f"{first.lower()}.{last.lower()}"
-            suffix     = random.choice(self._USERNAME_SUFFIXES)
-            username   = f"{base_uname}{suffix}"
-            while username in seen_usernames:
-                username = f"{base_uname}{suffix}{random.randint(1, 999)}"
-            seen_usernames.add(username)
-
-            email = self._fake.email()
-            while email in seen_emails:
-                email = self._fake.email()
-            seen_emails.add(email)
-
-            rows.append({
-                "registration_number": self._regNumber("S", idx),
-                "full_name":           f"{first} {last}",
-                "username":            username,
-                "password":            self._fake.password(
-                                           length=16,
-                                           special_chars=True,
-                                           digits=True,
-                                           upper_case=True,
-                                       ),
-                "email":               email,
-            })
-```
-
-#### Source Code
-```python
-    def generate(self, n: int = 50) -> pd.DataFrame:
-        if n < 1:
-            raise ValueError("n must be at least 1.")
-
-        seen_usernames: set[str] = set()
-        seen_emails: set[str] = set()
-        rows: list[dict] = []
-
-        for idx in range(1, n + 1):
-            first = self._fake.first_name()
-            last  = self._fake.last_name()
-
-            # Build a unique username derived from the person's name.
-            base_uname = f"{first.lower()}.{last.lower()}"
-            suffix     = random.choice(self._USERNAME_SUFFIXES)
-            username   = f"{base_uname}{suffix}"
-            # Append a counter suffix when collisions occur.
-            while username in seen_usernames:
-                username = f"{base_uname}{suffix}{random.randint(1, 999)}"
-            seen_usernames.add(username)
+            am = self._regNumber("S", idx)
 
             # Generate a unique email address.
             email = self._fake.email()
@@ -169,17 +122,67 @@ Builds attributes string values per student iterative component mapping.
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._regNumber("S", idx),
-                "full_name":           f"{first} {last}",
-                "username":            username,
-                "password":            self._fake.password(
+                "AM":                  am,
+                "Password":            self._fake.password(
                                            length=16,
                                            special_chars=True,
                                            digits=True,
                                            upper_case=True,
                                        ),
+                "Username":            am,
                 "email":               email,
+                "FirstName":           first,
+                "LastName":            last,
+            })
+```
+
+**Phase 3: Formatting Return Values**
+Packs list data to tabular structures.
+* **Operation 1:** Constructs and returns a `pd.DataFrame` instance initialized using the assembled `rows`.
+
+#### Source Code
+```python
+    def generate(self, n: int = 50) -> pd.DataFrame:
+        if n < 1:
+            raise ValueError("n must be at least 1.")
+
+        seen_emails: set[str] = set()
+        rows: list[dict] = []
+
+        for idx in range(1, n + 1):
+            first = self._fake.first_name()
+            last  = self._fake.last_name()
+
+            am = self._regNumber("S", idx)
+
+            # Generate a unique email address.
+            email = self._fake.email()
+            while email in seen_emails:
+                email = self._fake.email()
+            seen_emails.add(email)
+
+            rows.append({
+                "AM":                  am,
+                "Password":            self._fake.password(
+                                           length=16,
+                                           special_chars=True,
+                                           digits=True,
+                                           upper_case=True,
+                                       ),
+                "Username":            am,
+                "email":               email,
+                "FirstName":           first,
+                "LastName":            last,
             })
 
         return pd.DataFrame(rows)
 ```
+
+#### Usage Example
+```python
+generator = StudentGenerator(seed=42)
+df = generator.generate(n=100)
+```
+
+#### Common Issues & Related Functions
+* **Issue:** Slow operation when generating millions of rows due to collision checking.

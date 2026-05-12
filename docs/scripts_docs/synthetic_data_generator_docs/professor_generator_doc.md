@@ -4,20 +4,20 @@
 
 | Name | Type | Description |
 |------|------|-------------|
-| [ProfessorGenerator](#professorgenerator) | Class | Generates synthetic rows for the Professors table. |
+| [ProfessorGenerator](#professorgenerator) | Class | Generates synthetic rows for the INSTRUCTOR table. |
 | [ProfessorGenerator.__init__](#__init__) | Function | Initialises ProfessorGenerator. |
 | [ProfessorGenerator.generate](#generate) | Function | Produces a DataFrame of synthetic professor records. |
 
 ## Overview
-This file contains the `ProfessorGenerator` class, responsible for producing synthetic data for the Professors table. It handles the generation of unique IDs, names, emails, and academic specialisations, building off the shared logic in `BaseGenerator`.
+This file contains the `ProfessorGenerator` class, responsible for producing synthetic data matching the INSTRUCTOR table schema. It handles the generation of unique IDs (AM), names, emails, and sets the Username to mirror the AM, building off the shared logic in `BaseGenerator`.
 
 ## Detailed Breakdown
 
 ## ProfessorGenerator
 
-**Class Responsibility:** Generates randomized records mirroring the Professors schema, creating realistic fields such as names, unique emails, and randomized academic specialisations from a predefined set.
+**Class Responsibility:** Generates randomized records mirroring the INSTRUCTOR schema. Creates realistic fields such as names, unique emails, and randomized academic specialisations, whilst tying the Username directly to the generated AM to emulate registration numbers as login handles.
 
-### __init__
+### Constructor
 
 **Signature:**
 ```python
@@ -34,7 +34,7 @@ def __init__(self, seed: int | None = None) -> None
 **Returns:**
 | Type | Description |
 |------|-------------|
-| None | Returns nothing |
+| return_type | Returns nothing (None) |
 
 **Source Code:**
 ```python
@@ -51,13 +51,14 @@ def __init__(self, seed: int | None = None) -> None
 |--------|------|---------|--------|
 | BaseGenerator | Internal | Inheritance foundation | .base_generator |
 
+
 ### generate
 
 **Primary Library:** `pandas`  
 **Purpose:** Produces a DataFrame of synthetic professor records.
 
 #### Overview
-Iterates `n` times to create distinct records representing professors. Generates first name, last name, and a verified-unique email using a while-loop collision check. Binds each professor to a randomized specialization and compiles the final result into a DataFrame.
+Iterates `n` times to create distinct records representing instructors. Generates first name, last name, registration number (AM), and a verified-unique email using a while-loop collision check. Binds each professor to a randomized specialization and compiles the final result into a DataFrame.
 
 #### Signature
 ```python
@@ -72,7 +73,7 @@ def generate(self, n: int = 10) -> pd.DataFrame
 #### Returns
 | Type | Description |
 |------|-------------|
-| pd.DataFrame | DataFrame with columns matching the Professors schema. |
+| pd.DataFrame | DataFrame with columns matching the INSTRUCTOR schema. |
 
 #### Raises
 | Exception | Condition |
@@ -101,9 +102,9 @@ Validates minimum limit bounds and prepares variables.
 
 **Phase 2: Generation Loop**
 Iteratively generates specific details for every requested professor.
-* **Operation 1:** Extracts `first_name` and `last_name` using `self._fake`.
+* **Operation 1:** Extracts `first` and `last` name using `self._fake` and generates `am` using `self._regNumber`.
 * **Operation 2:** Generates an `email`, entering a `while` loop until a unique email string is discovered, and saves it into `seen_emails`.
-* **Operation 3:** Constructs the row dictionary using `_regNumber`, Faker values, and a randomly selected `_SPECIALIZATIONS` string, then appends it to `rows`.
+* **Operation 3:** Constructs the row dictionary representing INSTRUCTOR schema (AM, Password, Username, FirstName, LastName, email, Specialization), explicitly setting Username to `am`, and appends it to `rows`.
 
 *Code Context:*
 ```python
@@ -111,17 +112,26 @@ Iteratively generates specific details for every requested professor.
             first = self._fake.first_name()
             last  = self._fake.last_name()
 
+            am = self._regNumber("P", idx)
+
             email = self._fake.email()
             while email in seen_emails:
                 email = self._fake.email()
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._regNumber("P", idx),
-                "first_name":          first,
-                "last_name":           last,
+                "AM":                  am,
+                "Password":            self._fake.password(
+                                           length=16,
+                                           special_chars=True,
+                                           digits=True,
+                                           upper_case=True,
+                                       ),
+                "Username":            am,
+                "FirstName":           first,
+                "LastName":            last,
                 "email":               email,
-                "specialization":      random.choice(self._SPECIALIZATIONS),
+                "Specialization":      random.choice(self._SPECIALIZATIONS),
             })
 ```
 
@@ -142,17 +152,26 @@ Packs list data to tabular structures.
             first = self._fake.first_name()
             last  = self._fake.last_name()
 
+            am = self._regNumber("P", idx)
+
             email = self._fake.email()
             while email in seen_emails:
                 email = self._fake.email()
             seen_emails.add(email)
 
             rows.append({
-                "registration_number": self._regNumber("P", idx),
-                "first_name":          first,
-                "last_name":           last,
+                "AM":                  am,
+                "Password":            self._fake.password(
+                                           length=16,
+                                           special_chars=True,
+                                           digits=True,
+                                           upper_case=True,
+                                       ),
+                "Username":            am,
+                "FirstName":           first,
+                "LastName":            last,
                 "email":               email,
-                "specialization":      random.choice(self._SPECIALIZATIONS),
+                "Specialization":      random.choice(self._SPECIALIZATIONS),
             })
 
         return pd.DataFrame(rows)
@@ -165,4 +184,4 @@ df = generator.generate(n=15)
 ```
 
 #### Common Issues & Related Functions
-* **Issue:** Slow operation when generating millions of rows due to collision checking.
+* **Issue:** Slow operation when generating millions of rows due to collision checking for email uniqueness.
