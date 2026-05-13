@@ -381,7 +381,7 @@ def buildEnrollmentDialog(
                 ui.select(
                     options=student_choices,
                     label="Student",
-                    value=data.get("AM_Student", ""),
+                    value=data.get("AM_Student"),
                 )
                 .classes("w-full")
                 .props(
@@ -398,7 +398,7 @@ def buildEnrollmentDialog(
                 ui.select(
                     options=course_choices,
                     label="Course",
-                    value=data.get("C_Code", ""),
+                    value=data.get("C_Code"),
                 )
                 .classes("w-full")
                 .props(
@@ -482,7 +482,7 @@ def buildEvaluationDialog(
                 ui.select(
                     options=instr_choices,
                     label="Instructor",
-                    value=data.get("AM_Instructor", ""),
+                    value=data.get("AM_Instructor"),
                 )
                 .classes("w-full")
                 .props(
@@ -502,7 +502,7 @@ def buildEvaluationDialog(
                 ui.select(
                     options=student_choices,
                     label="Student",
-                    value=data.get("AM_Student", ""),
+                    value=data.get("AM_Student"),
                 )
                 .classes("w-full")
                 .props(
@@ -519,7 +519,7 @@ def buildEvaluationDialog(
                 ui.select(
                     options=course_choices,
                     label="Course",
-                    value=data.get("C_Code", ""),
+                    value=data.get("C_Code"),
                 )
                 .classes("w-full")
                 .props(

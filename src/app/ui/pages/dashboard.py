@@ -203,7 +203,8 @@ def _buildQuickActions() -> None:
         ])
     else:
         actions.extend([
-            ("playlist_add", "Enroll in Course", "Join a new class.", "/enrollments"),
+            ("playlist_add", "Enroll in Course", "Join a new class.", "/courses"),
+            ("star_rate", "Add Evaluation", "Evaluate a course/instructor.", "/evaluations"),
         ])
 
     with ui.grid(columns=4).classes("w-full gap-4"):

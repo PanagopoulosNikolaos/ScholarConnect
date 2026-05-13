@@ -13,6 +13,7 @@ from src.api_actions import (
     listProfessors,
     listStudents,
     listCourses,
+    listEnrollments,
     addEvaluation,
     updateEvaluation,
     deleteEvaluation,
@@ -47,19 +48,18 @@ def buildEvaluationsPage() -> None:
                 ui.label("Evaluations").classes(
                     "text-white font-bold text-3xl tracking-tight"
                 )
-                ui.label("Manage instructor evaluations of students.").classes(
+                ui.label("Manage student evaluations of courses and instructors.").classes(
                     "text-white/40 text-sm"
                 )
             role = app.storage.user.get("user_role", "student")
-            if role in ("admin", "professor"):
-                ui.button(
-                    "Add Evaluation",
-                    icon="add",
-                    on_click=lambda: _openAddDialog(table_container),
-                ).classes(
-                    "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
-                    "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
-                )
+            ui.button(
+                "Add Evaluation",
+                icon="add",
+                on_click=lambda: _openAddDialog(table_container),
+            ).classes(
+                "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
+                "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
+            )
 
         table_container = ui.column().classes("w-full")
         _renderTable(table_container)
@@ -133,22 +133,22 @@ def _renderTable(container: ui.column) -> None:
                 """,
             )
 
-            if role in ("admin", "professor"):
-                table.add_slot(
-                    "body-cell-actions",
-                    "<q-td :props='props'>"
-                    "  <q-btn flat round dense icon='edit' color='indigo-4'"
-                    "    @click=\"$parent.$emit('edit', props.row)\" />"
-                    "  <q-btn flat round dense icon='delete' color='red-4'"
-                    "    @click=\"$parent.$emit('delete', props.row)\" />"
-                    "</q-td>",
-                )
-                table.columns.append(
-                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
-                )
+            # Actions are available for all users on their own evaluations
+            table.add_slot(
+                "body-cell-actions",
+                "<q-td :props='props'>"
+                "  <q-btn flat round dense icon='edit' color='indigo-4'"
+                "    @click=\"$parent.$emit('edit', props.row)\" />"
+                "  <q-btn flat round dense icon='delete' color='red-4'"
+                "    @click=\"$parent.$emit('delete', props.row)\" />"
+                "</q-td>",
+            )
+            table.columns.append(
+                {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+            )
 
-                table.on("edit", lambda e: _openEditDialog(e.args, container))
-                table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+            table.on("edit", lambda e: _openEditDialog(e.args, container))
+            table.on("delete", lambda e: _openDeleteDialog(e.args, container))
 
 
 def _openAddDialog(container: ui.column) -> None:
@@ -161,6 +161,18 @@ def _openAddDialog(container: ui.column) -> None:
     professors = listProfessors()
     students = listStudents()
     courses = listCourses()
+    
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    if role == "student":
+        students = [s for s in students if s["AM"] == user_am]
+        my_enrollments = [e for e in listEnrollments() if e["AM_Student"] == user_am]
+        my_course_codes = {e["C_Code"] for e in my_enrollments}
+        courses = [c for c in courses if c["C_Code"] in my_course_codes]
+        my_instructor_ams = {c["AM_Instructor"] for c in courses if c.get("AM_Instructor")}
+        professors = [p for p in professors if p["AM"] in my_instructor_ams]
+    elif role == "professor":
+        professors = [p for p in professors if p["AM"] == user_am]
 
     def _submit(data: dict) -> None:
         """Calls addEvaluation and refreshes the table on success."""
@@ -203,6 +215,18 @@ def _openEditDialog(row: dict, container: ui.column) -> None:
     professors = listProfessors()
     students = listStudents()
     courses = listCourses()
+    
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    if role == "student":
+        students = [s for s in students if s["AM"] == user_am]
+        my_enrollments = [e for e in listEnrollments() if e["AM_Student"] == user_am]
+        my_course_codes = {e["C_Code"] for e in my_enrollments}
+        courses = [c for c in courses if c["C_Code"] in my_course_codes]
+        my_instructor_ams = {c["AM_Instructor"] for c in courses if c.get("AM_Instructor")}
+        professors = [p for p in professors if p["AM"] in my_instructor_ams]
+    elif role == "professor":
+        professors = [p for p in professors if p["AM"] == user_am]
 
     def _submit(data: dict) -> None:
         """Calls updateEvaluation with changed fields and refreshes the table."""
