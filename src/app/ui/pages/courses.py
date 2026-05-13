@@ -15,6 +15,8 @@ from src.api_actions import (
     updateCourse,
     deleteCourse,
     addEnrollment,
+    listEnrollments,
+    deleteEnrollment,
 )
 import datetime
 from src.app.ui.components.sidebar import buildSidebar
@@ -78,6 +80,14 @@ def _renderTable(container: ui.column) -> None:
     """
     container.clear()
     courses = listCourses()
+    
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    
+    if role == "student":
+        my_enrollments = {e["C_Code"] for e in listEnrollments() if e["AM_Student"] == user_am}
+        for c in courses:
+            c["_enrolled"] = c["C_Code"] in my_enrollments
 
     with container:
         if not courses:
@@ -109,7 +119,6 @@ def _renderTable(container: ui.column) -> None:
 
             search.bind_value(table, "filter")
             
-            role = app.storage.user.get("user_role", "student")
             if role == "admin":
                 table.add_slot(
                     "body-cell-actions",
@@ -130,14 +139,17 @@ def _renderTable(container: ui.column) -> None:
                 table.add_slot(
                     "body-cell-actions",
                     "<q-td :props='props'>"
-                    "  <q-btn flat dense icon='person_add' label='Join' color='green-4' class='no-uppercase'"
+                    "  <q-btn v-if='!props.row._enrolled' flat dense icon='person_add' label='Join' color='green-4' class='no-uppercase'"
                     "    @click=\"$parent.$emit('join', props.row)\" />"
+                    "  <q-btn v-else flat dense icon='logout' label='Leave' color='red-4' class='no-uppercase'"
+                    "    @click=\"$parent.$emit('leave', props.row)\" />"
                     "</q-td>",
                 )
                 table.columns.append(
                     {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
                 )
                 table.on("join", lambda e: _joinCourse(e.args, container))
+                table.on("leave", lambda e: _leaveCourse(e.args, container))
 
 
 def _joinCourse(row: dict, container: ui.column) -> None:
@@ -159,8 +171,31 @@ def _joinCourse(row: dict, container: ui.column) -> None:
     
     if ok:
         ui.notify(f"Successfully joined {row['Title']}!", type="positive", position="top")
+        _renderTable(container)
     else:
         ui.notify("You are already enrolled or joining failed.", type="negative", position="top")
+
+
+def _leaveCourse(row: dict, container: ui.column) -> None:
+    """
+    Unenrolls the logged-in student from the selected course.
+    """
+    user_am = app.storage.user.get("user_am")
+    if not user_am:
+        return
+        
+    c_code = row["C_Code"]
+    
+    ok = deleteEnrollment(
+        am_student=user_am,
+        c_code=c_code,
+    )
+    
+    if ok:
+        ui.notify(f"Left {row['Title']}.", type="warning", position="top")
+        _renderTable(container)
+    else:
+        ui.notify("Failed to leave course.", type="negative", position="top")
 
 
 def _openAddDialog(container: ui.column) -> None:

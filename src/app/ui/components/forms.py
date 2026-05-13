@@ -300,13 +300,11 @@ def buildCourseDialog(
             )
 
             # Build professor select options list
-            prof_choices = [{"label": "-- None --", "value": ""}] + [
-                {
-                    "label": f"{p['FirstName']} {p['LastName']} ({p['AM']})",
-                    "value": p["AM"],
-                }
+            prof_choices = {"": "-- None --"}
+            prof_choices.update({
+                p["AM"]: f"{p['FirstName']} {p['LastName']} ({p['AM']})"
                 for p in professor_options
-            ]
+            })
             prof_select = (
                 ui.select(
                     options=prof_choices,
@@ -370,13 +368,10 @@ def buildEnrollmentDialog(
     dialog, card = _buildDialogShell(title)
     with card:
         with ui.column().classes("w-full gap-3"):
-            student_choices = [
-                {
-                    "label": f"{s['FirstName']} {s['LastName']} ({s['AM']})",
-                    "value": s["AM"],
-                }
+            student_choices = {
+                s["AM"]: f"{s['FirstName']} {s['LastName']} ({s['AM']})"
                 for s in student_options
-            ]
+            }
             student_select = (
                 ui.select(
                     options=student_choices,
@@ -390,10 +385,10 @@ def buildEnrollmentDialog(
                 )
             )
 
-            course_choices = [
-                {"label": f"{c['Title']} ({c['C_Code']})", "value": c["C_Code"]}
+            course_choices = {
+                c["C_Code"]: f"{c['Title']} ({c['C_Code']})"
                 for c in course_options
-            ]
+            }
             course_select = (
                 ui.select(
                     options=course_choices,
@@ -471,13 +466,10 @@ def buildEvaluationDialog(
     dialog, card = _buildDialogShell(title)
     with card:
         with ui.column().classes("w-full gap-3"):
-            instr_choices = [
-                {
-                    "label": f"{i['FirstName']} {i['LastName']} ({i['AM']})",
-                    "value": i["AM"],
-                }
+            instr_choices = {
+                i["AM"]: f"{i['FirstName']} {i['LastName']} ({i['AM']})"
                 for i in instructor_options
-            ]
+            }
             instr_select = (
                 ui.select(
                     options=instr_choices,
@@ -491,13 +483,10 @@ def buildEvaluationDialog(
                 )
             )
 
-            student_choices = [
-                {
-                    "label": f"{s['FirstName']} {s['LastName']} ({s['AM']})",
-                    "value": s["AM"],
-                }
+            student_choices = {
+                s["AM"]: f"{s['FirstName']} {s['LastName']} ({s['AM']})"
                 for s in student_options
-            ]
+            }
             student_select = (
                 ui.select(
                     options=student_choices,
@@ -511,10 +500,10 @@ def buildEvaluationDialog(
                 )
             )
 
-            course_choices = [
-                {"label": f"{c['Title']} ({c['C_Code']})", "value": c["C_Code"]}
+            course_choices = {
+                c["C_Code"]: f"{c['Title']} ({c['C_Code']})"
                 for c in course_options
-            ]
+            }
             course_select = (
                 ui.select(
                     options=course_choices,
