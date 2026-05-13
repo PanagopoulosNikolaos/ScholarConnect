@@ -38,7 +38,7 @@ def buildDashboardPage() -> None:
 
     buildSidebar()
 
-    with ui.column().classes("w-full min-h-screen bg-[#0a0d14] p-8 gap-8"):
+    with ui.column().classes("w-full min-h-screen bg-transparent p-8 gap-8"):
         # Page header
         with ui.column().classes("gap-1"):
             ui.label("Dashboard").classes(
@@ -123,10 +123,10 @@ def _buildMetricCard(
     cursor_class = "cursor-pointer hover:border-white/20" if path else ""
 
     card = ui.card().classes(
-        f"bg-[#161b27] border border-white/5 rounded-2xl p-5 "
-        f"transition-all duration-200 {cursor_class} "
-        f"hover:bg-[#1c2235]"
-    ).style(f"border-top: 2px solid {accent_color}30")
+        f"bg-[rgba(22,27,39,0.5)] border border-white/5 rounded-2xl p-6 "
+        f"transition-all duration-200 {cursor_class} hover-lift "
+        f"hover:bg-[rgba(28,34,53,0.7)] backdrop-blur-md"
+    ).style(f"border-top: 2px solid {accent_color}60")
     if path:
         card.on("click", lambda p=path: ui.navigate.to(p))
     with card:
@@ -138,9 +138,9 @@ def _buildMetricCard(
 
             with ui.column().classes("gap-0"):
                 ui.label(value).classes(
-                    "text-white font-bold text-3xl leading-tight tracking-tight"
+                    "text-white font-bold text-4xl leading-tight tracking-tight drop-shadow-md"
                 )
-                ui.label(label).classes("text-white/50 text-sm")
+                ui.label(label).classes("text-white/60 text-sm font-medium uppercase tracking-wider mt-1")
 
 
 def _buildQuickActions() -> None:
@@ -164,9 +164,9 @@ def _buildQuickActions() -> None:
     with ui.grid(columns=4).classes("w-full gap-4"):
         for icon_name, title, desc, path in actions:
             card = ui.card().classes(
-                "bg-[#161b27] border border-white/5 rounded-2xl p-5 "
-                "cursor-pointer hover:bg-[#1c2235] hover:border-indigo-500/30 "
-                "transition-all duration-200"
+                "bg-[rgba(22,27,39,0.5)] border border-white/5 rounded-2xl p-6 "
+                "cursor-pointer hover:bg-[rgba(28,34,53,0.7)] hover:border-indigo-500/50 "
+                "transition-all duration-200 hover-lift backdrop-blur-md"
             )
             card.on("click", lambda p=path: ui.navigate.to(p))
             with card:

@@ -22,15 +22,15 @@ def buildSidebar() -> None:
     automatically offsets the main content area to the right of the drawer.
     """
     with ui.left_drawer().classes(
-        "bg-[#0f1117] border-r border-white/5 flex flex-col"
-    ).style("min-width: 240px; width: 240px"):
+        "bg-transparent flex flex-col"
+    ).style("min-width: 260px; width: 260px"):
         # Brand / logo block
         with ui.column().classes("items-center py-8 px-4 gap-1"):
-            ui.icon("school", size="2.5rem").classes("text-indigo-400")
+            ui.icon("school", size="3rem").classes("text-indigo-400 drop-shadow-lg")
             ui.label("ScholarConnect").classes(
-                "text-white font-bold text-lg tracking-wide"
+                "text-white font-extrabold text-xl tracking-tight mt-2"
             )
-            ui.label("Academic Portal").classes("text-white/40 text-xs")
+            ui.label("Academic Portal").classes("text-indigo-200/60 text-xs font-semibold uppercase tracking-widest")
 
         ui.separator().classes("opacity-10 mx-4 my-2")
 
@@ -112,19 +112,19 @@ def _buildNavRow(
     elif active:
         row_classes = (
             "w-full flex items-center gap-3 px-4 py-3 rounded-xl "
-            "cursor-pointer transition-all duration-200 "
-            "bg-indigo-500/20 border border-indigo-500/30"
+            "cursor-pointer transition-all duration-300 "
+            "bg-gradient-to-r from-indigo-500/20 to-purple-500/10 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]"
         )
-        icon_classes = "text-indigo-300"
-        label_classes = "text-indigo-300 text-sm font-medium"
+        icon_classes = "text-indigo-300 drop-shadow-md"
+        label_classes = "text-indigo-200 text-sm font-semibold tracking-wide"
     else:
         row_classes = (
             "w-full flex items-center gap-3 px-4 py-3 rounded-xl "
             "cursor-pointer transition-all duration-200 "
-            "hover:bg-white/5 border border-transparent"
+            "hover:bg-white/5 border border-transparent hover:translate-x-1"
         )
-        icon_classes = "text-white/50"
-        label_classes = "text-white/60 text-sm font-medium hover:text-white/90"
+        icon_classes = "text-white/40 group-hover:text-white/80 transition-colors"
+        label_classes = "text-white/50 text-sm font-medium hover:text-white/90 transition-colors"
 
     with ui.row().classes(row_classes).on("click", on_click):
         ui.icon(icon_name, size="1.2rem").classes(icon_classes)
