@@ -152,10 +152,10 @@ def buildStudentDialog(
         def _submit():
             """Collects field values and delegates to the provided callback."""
             payload = {
-                "AM": am_input.value.strip(),
-                "FirstName": first_input.value.strip(),
-                "LastName": last_input.value.strip(),
-                "email": email_input.value.strip(),
+                "AM": am_input.value.strip() if am_input.value else "",
+                "FirstName": first_input.value.strip() if first_input.value else "",
+                "LastName": last_input.value.strip() if last_input.value else "",
+                "email": email_input.value.strip() if email_input.value else "",
             }
             if pwd_input:
                 payload["Password"] = pwd_input.value
@@ -228,11 +228,11 @@ def buildProfessorDialog(
         def _submit():
             """Collects field values and delegates to the provided callback."""
             payload = {
-                "AM": am_input.value.strip(),
-                "FirstName": first_input.value.strip(),
-                "LastName": last_input.value.strip(),
-                "email": email_input.value.strip(),
-                "Specialization": spec_input.value.strip(),
+                "AM": am_input.value.strip() if am_input.value else "",
+                "FirstName": first_input.value.strip() if first_input.value else "",
+                "LastName": last_input.value.strip() if last_input.value else "",
+                "email": email_input.value.strip() if email_input.value else "",
+                "Specialization": spec_input.value.strip() if spec_input.value else None,
             }
             if pwd_input:
                 payload["Password"] = pwd_input.value
@@ -318,10 +318,10 @@ def buildCourseDialog(
         def _submit():
             """Collects field values and delegates to the provided callback."""
             payload = {
-                "C_Code": code_input.value.strip(),
-                "Title": title_input.value.strip(),
-                "Description": desc_input.value.strip() or None,
-                "Category": cat_input.value.strip() or None,
+                "C_Code": code_input.value.strip() if code_input.value else "",
+                "Title": title_input.value.strip() if title_input.value else "",
+                "Description": desc_input.value.strip() if desc_input.value else None,
+                "Category": cat_input.value.strip() if cat_input.value else None,
                 "AM_Instructor": prof_select.value or None,
             }
             on_submit(payload)
@@ -416,7 +416,7 @@ def buildEnrollmentDialog(
             payload = {
                 "AM_Student": student_select.value,
                 "C_Code": course_select.value,
-                "StartDate": date_input.value.strip(),
+                "StartDate": date_input.value.strip() if date_input.value else "",
             }
             on_submit(payload)
             dialog.close()
@@ -550,7 +550,7 @@ def buildEvaluationDialog(
                 "AM_Student": student_select.value,
                 "C_Code": course_select.value,
                 "Rating": int(rating_slider.value),
-                "Comments": comments_input.value.strip() or None,
+                "Comments": comments_input.value.strip() if comments_input.value else None,
             }
             on_submit(payload)
             dialog.close()
