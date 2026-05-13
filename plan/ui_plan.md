@@ -87,8 +87,3 @@ src/
 ```bash
 conda run -n py14 python -m src.app.ui.main
 ```
-
-## Notes
-
-- The current `src/ui_preview.py` serves as the functional reference for the final modular implementation.
-- All UI actions must handle database exceptions gracefully to prevent application crashes.
