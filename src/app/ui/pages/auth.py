@@ -98,6 +98,14 @@ def buildLoginPage() -> None:
                     error_label.classes(remove="hidden")
                     return
 
+                # Admin bypass
+                if am.lower() == "admin" and pwd == "admin":
+                    app.storage.user["authenticated"] = True
+                    app.storage.user["user_am"] = "admin"
+                    app.storage.user["user_role"] = "admin"
+                    ui.navigate.to("/dashboard")
+                    return
+
                 # Check student table first, then instructor table.
                 record = getStudent(am)
                 role = "student"

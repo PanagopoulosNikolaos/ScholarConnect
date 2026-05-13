@@ -7,14 +7,16 @@ Add, Edit, and Delete operations via modal dialogs.  Professor assignment
 is handled through the course dialog's select field.
 """
 
-from nicegui import ui
+from nicegui import ui, app
 from src.api_actions import (
     listCourses,
     listProfessors,
     addCourse,
     updateCourse,
     deleteCourse,
+    addEnrollment,
 )
+import datetime
 from src.app.ui.components.sidebar import buildSidebar
 from src.app.ui.components.forms import buildCourseDialog, buildConfirmDialog
 
@@ -48,14 +50,16 @@ def buildCoursesPage() -> None:
                 ui.label("Manage course offerings and assignments.").classes(
                     "text-white/40 text-sm"
                 )
-            ui.button(
-                "Add Course",
-                icon="add",
-                on_click=lambda: _openAddDialog(table_container),
-            ).classes(
-                "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
-                "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
-            )
+            role = app.storage.user.get("user_role", "student")
+            if role == "admin":
+                ui.button(
+                    "Add Course",
+                    icon="add",
+                    on_click=lambda: _openAddDialog(table_container),
+                ).classes(
+                    "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
+                    "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
+                )
 
         table_container = ui.column().classes("w-full")
         _renderTable(table_container)
@@ -104,22 +108,59 @@ def _renderTable(container: ui.column) -> None:
             ).classes("w-full text-white/80 text-sm").props("dark flat")
 
             search.bind_value(table, "filter")
+            
+            role = app.storage.user.get("user_role", "student")
+            if role == "admin":
+                table.add_slot(
+                    "body-cell-actions",
+                    "<q-td :props='props'>"
+                    "  <q-btn flat round dense icon='edit' color='indigo-4'"
+                    "    @click=\"$parent.$emit('edit', props.row)\" />"
+                    "  <q-btn flat round dense icon='delete' color='red-4'"
+                    "    @click=\"$parent.$emit('delete', props.row)\" />"
+                    "</q-td>",
+                )
+                table.columns.append(
+                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+                )
 
-            table.add_slot(
-                "body-cell-actions",
-                "<q-td :props='props'>"
-                "  <q-btn flat round dense icon='edit' color='indigo-4'"
-                "    @click=\"$parent.$emit('edit', props.row)\" />"
-                "  <q-btn flat round dense icon='delete' color='red-4'"
-                "    @click=\"$parent.$emit('delete', props.row)\" />"
-                "</q-td>",
-            )
-            table.columns.append(
-                {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
-            )
+                table.on("edit", lambda e: _openEditDialog(e.args, container))
+                table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+            elif role == "student":
+                table.add_slot(
+                    "body-cell-actions",
+                    "<q-td :props='props'>"
+                    "  <q-btn flat dense icon='person_add' label='Join' color='green-4' class='no-uppercase'"
+                    "    @click=\"$parent.$emit('join', props.row)\" />"
+                    "</q-td>",
+                )
+                table.columns.append(
+                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+                )
+                table.on("join", lambda e: _joinCourse(e.args, container))
 
-            table.on("edit", lambda e: _openEditDialog(e.args, container))
-            table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+
+def _joinCourse(row: dict, container: ui.column) -> None:
+    """
+    Enrolls the logged-in student in the selected course.
+    """
+    user_am = app.storage.user.get("user_am")
+    if not user_am:
+        return
+        
+    c_code = row["C_Code"]
+    start_date = datetime.date.today().isoformat()
+    
+    ok = addEnrollment(
+        am_student=user_am,
+        c_code=c_code,
+        start_date=start_date
+    )
+    
+    if ok:
+        ui.notify(f"Successfully joined {row['Title']}!", type="positive", position="top")
+    else:
+        ui.notify("You are already enrolled or joining failed.", type="negative", position="top")
 
 
 def _openAddDialog(container: ui.column) -> None:

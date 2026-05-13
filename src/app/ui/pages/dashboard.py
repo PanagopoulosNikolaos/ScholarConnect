@@ -6,13 +6,15 @@ Displays high-level system statistics as metric cards and provides
 quick-action shortcuts to navigate to the primary entity management pages.
 """
 
-from nicegui import ui
+from nicegui import ui, app
 from src.api_actions import (
     listStudents,
     listProfessors,
     listCourses,
     listEnrollments,
     listEvaluations,
+    getStudent,
+    getProfessor,
 )
 from src.app.ui.components.sidebar import buildSidebar
 
@@ -32,8 +34,22 @@ def buildDashboardPage() -> None:
     enrollments = listEnrollments()
     evaluations = listEvaluations()
 
+    # Role-based filtering
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    
+    # Calculate filtered metrics
+    my_enrollments = enrollments
+    my_evals = evaluations
+    
+    if role == "student":
+        my_enrollments = [e for e in enrollments if e["AM_Student"] == user_am]
+        my_evals = [e for e in evaluations if e["AM_Student"] == user_am]
+    elif role == "professor":
+        my_evals = [e for e in evaluations if e["AM_Instructor"] == user_am]
+
     # Compute average rating from non-null evaluation records.
-    ratings = [e["Rating"] for e in evaluations if e.get("Rating") is not None]
+    ratings = [e["Rating"] for e in my_evals if e.get("Rating") is not None]
     avg_rating = round(sum(ratings) / len(ratings), 1) if ratings else 0.0
 
     buildSidebar()
@@ -41,6 +57,22 @@ def buildDashboardPage() -> None:
     with ui.column().classes("w-full min-h-screen bg-transparent p-8 gap-8"):
         # Page header
         with ui.column().classes("gap-1"):
+            # Welcome message
+            display_name = user_am
+            if role == "student":
+                rec = getStudent(user_am)
+                if rec:
+                    display_name = f"{rec.get('FirstName', '')} {rec.get('LastName', '')} ({user_am})"
+            elif role == "professor":
+                rec = getProfessor(user_am)
+                if rec:
+                    display_name = f"{rec.get('FirstName', '')} {rec.get('LastName', '')} ({user_am})"
+            elif role == "admin":
+                display_name = "Administrator"
+
+            ui.label(f"Welcome, {display_name}").classes(
+                "text-indigo-400 font-semibold text-sm uppercase tracking-wider mb-[-4px]"
+            )
             ui.label("Dashboard").classes(
                 "text-white font-bold text-3xl tracking-tight"
             )
@@ -53,8 +85,8 @@ def buildDashboardPage() -> None:
             students=len(students),
             professors=len(professors),
             courses=len(courses),
-            enrollments=len(enrollments),
-            evaluations=len(evaluations),
+            enrollments=len(my_enrollments),
+            evaluations=len(my_evals),
             avg_rating=avg_rating,
         )
 
@@ -154,12 +186,25 @@ def _buildQuickActions() -> None:
         "text-white font-semibold text-lg mt-2"
     )
 
-    actions = [
-        ("group_add", "Add Student", "Register a new student record.", "/students"),
-        ("person_add", "Add Professor", "Onboard a new instructor.", "/professors"),
-        ("library_add", "Add Course", "Create a new course offering.", "/courses"),
-        ("playlist_add", "Add Enrollment", "Enroll a student in a course.", "/enrollments"),
-    ]
+    role = app.storage.user.get("user_role", "student")
+
+    actions = []
+    if role == "admin":
+        actions.extend([
+            ("group_add", "Add Student", "Register a new student record.", "/students"),
+            ("person_add", "Add Professor", "Onboard a new instructor.", "/professors"),
+            ("library_add", "Add Course", "Create a new course offering.", "/courses"),
+            ("playlist_add", "Add Enrollment", "Enroll a student in a course.", "/enrollments"),
+        ])
+    elif role == "professor":
+        actions.extend([
+            ("library_add", "Add Course", "Create a new course offering.", "/courses"),
+            ("star_rate", "Add Evaluation", "Grade a student.", "/evaluations"),
+        ])
+    else:
+        actions.extend([
+            ("playlist_add", "Enroll in Course", "Join a new class.", "/enrollments"),
+        ])
 
     with ui.grid(columns=4).classes("w-full gap-4"):
         for icon_name, title, desc, path in actions:

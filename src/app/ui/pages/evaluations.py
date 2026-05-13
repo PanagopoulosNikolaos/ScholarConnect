@@ -7,7 +7,7 @@ Add, Edit, and Delete operations via modal dialogs.  Displays rating
 values with color-coded badges for quick visual scanning.
 """
 
-from nicegui import ui
+from nicegui import ui, app
 from src.api_actions import (
     listEvaluations,
     listProfessors,
@@ -50,14 +50,16 @@ def buildEvaluationsPage() -> None:
                 ui.label("Manage instructor evaluations of students.").classes(
                     "text-white/40 text-sm"
                 )
-            ui.button(
-                "Add Evaluation",
-                icon="add",
-                on_click=lambda: _openAddDialog(table_container),
-            ).classes(
-                "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
-                "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
-            )
+            role = app.storage.user.get("user_role", "student")
+            if role in ("admin", "professor"):
+                ui.button(
+                    "Add Evaluation",
+                    icon="add",
+                    on_click=lambda: _openAddDialog(table_container),
+                ).classes(
+                    "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
+                    "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
+                )
 
         table_container = ui.column().classes("w-full")
         _renderTable(table_container)
@@ -75,7 +77,16 @@ def _renderTable(container: ui.column) -> None:
             table mount point.
     """
     container.clear()
+    
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    
     evaluations = listEvaluations()
+    
+    if role == "student":
+        evaluations = [e for e in evaluations if e["AM_Student"] == user_am]
+    elif role == "professor":
+        evaluations = [e for e in evaluations if e["AM_Instructor"] == user_am]
 
     with container:
         if not evaluations:
@@ -122,21 +133,22 @@ def _renderTable(container: ui.column) -> None:
                 """,
             )
 
-            table.add_slot(
-                "body-cell-actions",
-                "<q-td :props='props'>"
-                "  <q-btn flat round dense icon='edit' color='indigo-4'"
-                "    @click=\"$parent.$emit('edit', props.row)\" />"
-                "  <q-btn flat round dense icon='delete' color='red-4'"
-                "    @click=\"$parent.$emit('delete', props.row)\" />"
-                "</q-td>",
-            )
-            table.columns.append(
-                {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
-            )
+            if role in ("admin", "professor"):
+                table.add_slot(
+                    "body-cell-actions",
+                    "<q-td :props='props'>"
+                    "  <q-btn flat round dense icon='edit' color='indigo-4'"
+                    "    @click=\"$parent.$emit('edit', props.row)\" />"
+                    "  <q-btn flat round dense icon='delete' color='red-4'"
+                    "    @click=\"$parent.$emit('delete', props.row)\" />"
+                    "</q-td>",
+                )
+                table.columns.append(
+                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+                )
 
-            table.on("edit", lambda e: _openEditDialog(e.args, container))
-            table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+                table.on("edit", lambda e: _openEditDialog(e.args, container))
+                table.on("delete", lambda e: _openDeleteDialog(e.args, container))
 
 
 def _openAddDialog(container: ui.column) -> None:

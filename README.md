@@ -27,7 +27,14 @@ ScholarConnect is a centralized academic management platform designed to streaml
     ```bash
     conda run -n py14 python -m scripts.seed_sqlite --db-path db/scholarconnect.sqlite3
     ```
-5.  **Explore the Documentation:**
+5.  **Run the Web Application:**
+    ```bash
+    conda run -n py14 python -m src.app.ui.main
+    ```
+    - The app will be available at `http://localhost:8080`.
+    - **Admin Login:** Use `admin` for both AM/Username and Password to access the full platform.
+
+6.  **Explore the Documentation:**
     - [Database Schema](db/schema.md)
     - [SQLite Schema SQL](db/schema.sql)
     - [Development Plan](plan/plan.md)

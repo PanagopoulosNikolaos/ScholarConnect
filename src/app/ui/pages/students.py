@@ -6,7 +6,7 @@ Provides a searchable, sortable table of all students with inline
 Add, Edit, and Delete operations via modal dialogs.
 """
 
-from nicegui import ui
+from nicegui import ui, app
 from src.api_actions import (
     listStudents,
     addStudent,
@@ -47,14 +47,16 @@ def buildStudentsPage() -> None:
                 ui.label("Manage student records.").classes(
                     "text-white/40 text-sm"
                 )
-            ui.button(
-                "Add Student",
-                icon="add",
-                on_click=lambda: _openAddDialog(table_container),
-            ).classes(
-                "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
-                "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
-            )
+            role = app.storage.user.get("user_role", "student")
+            if role == "admin":
+                ui.button(
+                    "Add Student",
+                    icon="add",
+                    on_click=lambda: _openAddDialog(table_container),
+                ).classes(
+                    "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
+                    "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
+                )
 
         # Mutable container that holds the table so it can be re-rendered.
         table_container = ui.column().classes("w-full")
@@ -105,23 +107,27 @@ def _renderTable(container: ui.column) -> None:
 
             search.bind_value(table, "filter")
 
-            # Inject scoped action slot for edit/delete buttons.
-            table.add_slot(
-                "body-cell-actions",
-                "<q-td :props='props'>"
-                "  <q-btn flat round dense icon='edit' color='indigo-4'"
-                "    @click=\"$parent.$emit('edit', props.row)\" />"
-                "  <q-btn flat round dense icon='delete' color='red-4'"
-                "    @click=\"$parent.$emit('delete', props.row)\" />"
-                "</q-td>",
-            )
-            # Append the actions column header dynamically.
-            table.columns.append(
-                {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
-            )
+            search.bind_value(table, "filter")
 
-            table.on("edit", lambda e: _openEditDialog(e.args, container))
-            table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+            role = app.storage.user.get("user_role", "student")
+            if role == "admin":
+                # Inject scoped action slot for edit/delete buttons.
+                table.add_slot(
+                    "body-cell-actions",
+                    "<q-td :props='props'>"
+                    "  <q-btn flat round dense icon='edit' color='indigo-4'"
+                    "    @click=\"$parent.$emit('edit', props.row)\" />"
+                    "  <q-btn flat round dense icon='delete' color='red-4'"
+                    "    @click=\"$parent.$emit('delete', props.row)\" />"
+                    "</q-td>",
+                )
+                # Append the actions column header dynamically.
+                table.columns.append(
+                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+                )
+
+                table.on("edit", lambda e: _openEditDialog(e.args, container))
+                table.on("delete", lambda e: _openDeleteDialog(e.args, container))
 
 
 def _openAddDialog(container: ui.column) -> None:

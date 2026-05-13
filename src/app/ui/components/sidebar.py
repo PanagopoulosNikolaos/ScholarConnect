@@ -35,6 +35,7 @@ def buildSidebar() -> None:
         ui.separator().classes("opacity-10 mx-4 my-2")
 
         # Navigation links list
+        role = app.storage.user.get("user_role", "student")
         nav_items = [
             ("dashboard", "Dashboard", "/dashboard"),
             ("group", "Students", "/students"),

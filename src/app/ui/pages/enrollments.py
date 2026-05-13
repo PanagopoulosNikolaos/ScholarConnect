@@ -6,7 +6,7 @@ Provides a searchable table of all enrollment records with inline
 Add, Edit (start date only), and Delete operations via modal dialogs.
 """
 
-from nicegui import ui
+from nicegui import ui, app
 from src.api_actions import (
     listEnrollments,
     listStudents,
@@ -46,14 +46,16 @@ def buildEnrollmentsPage() -> None:
                 ui.label("Manage student course enrollments.").classes(
                     "text-white/40 text-sm"
                 )
-            ui.button(
-                "Add Enrollment",
-                icon="add",
-                on_click=lambda: _openAddDialog(table_container),
-            ).classes(
-                "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
-                "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
-            )
+            role = app.storage.user.get("user_role", "student")
+            if role == "admin":
+                ui.button(
+                    "Add Enrollment",
+                    icon="add",
+                    on_click=lambda: _openAddDialog(table_container),
+                ).classes(
+                    "bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl "
+                    "px-5 py-2 no-uppercase font-medium transition-colors duration-200"
+                )
 
         table_container = ui.column().classes("w-full")
         _renderTable(table_container)
@@ -71,7 +73,14 @@ def _renderTable(container: ui.column) -> None:
             table mount point.
     """
     container.clear()
+    
+    role = app.storage.user.get("user_role", "student")
+    user_am = app.storage.user.get("user_am", "")
+    
     enrollments = listEnrollments()
+    
+    if role == "student":
+        enrollments = [e for e in enrollments if e["AM_Student"] == user_am]
 
     with container:
         if not enrollments:
@@ -103,21 +112,22 @@ def _renderTable(container: ui.column) -> None:
 
             search.bind_value(table, "filter")
 
-            table.add_slot(
-                "body-cell-actions",
-                "<q-td :props='props'>"
-                "  <q-btn flat round dense icon='edit' color='indigo-4'"
-                "    @click=\"$parent.$emit('edit', props.row)\" />"
-                "  <q-btn flat round dense icon='delete' color='red-4'"
-                "    @click=\"$parent.$emit('delete', props.row)\" />"
-                "</q-td>",
-            )
-            table.columns.append(
-                {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
-            )
+            if role == "admin":
+                table.add_slot(
+                    "body-cell-actions",
+                    "<q-td :props='props'>"
+                    "  <q-btn flat round dense icon='edit' color='indigo-4'"
+                    "    @click=\"$parent.$emit('edit', props.row)\" />"
+                    "  <q-btn flat round dense icon='delete' color='red-4'"
+                    "    @click=\"$parent.$emit('delete', props.row)\" />"
+                    "</q-td>",
+                )
+                table.columns.append(
+                    {"name": "actions", "label": "Actions", "field": "actions", "align": "center"}
+                )
 
-            table.on("edit", lambda e: _openEditDialog(e.args, container))
-            table.on("delete", lambda e: _openDeleteDialog(e.args, container))
+                table.on("edit", lambda e: _openEditDialog(e.args, container))
+                table.on("delete", lambda e: _openDeleteDialog(e.args, container))
 
 
 def _openAddDialog(container: ui.column) -> None:
