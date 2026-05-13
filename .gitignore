@@ -101,3 +101,4 @@ cython_debug/
 
 /.vscode/*
 .vscode/*
+.nicegui/*
