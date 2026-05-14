@@ -429,6 +429,8 @@ def buildEnrollmentDialog(
 # ---------------------------------------------------------------------------
 # Evaluation forms
 # ---------------------------------------------------------------------------
+from typing import Callable
+from nicegui import ui
 
 def buildEvaluationDialog(
     on_submit: Callable[[dict], None],
@@ -439,25 +441,6 @@ def buildEvaluationDialog(
 ) -> ui.dialog:
     """
     Constructs the Add/Edit Evaluation modal dialog.
-
-    Renders selects for instructor, student, and course along with rating
-    (1-10) and optional comments fields.  All three ID selects are read-only
-    when editing an existing evaluation record.
-
-    Args:
-        on_submit (Callable[[dict], None]): Callback invoked with form data
-            on valid submission.
-        instructor_options (list[dict]): Instructor dicts with 'AM',
-            'FirstName', and 'LastName' keys.
-        student_options (list[dict]): Student dicts with 'AM', 'FirstName',
-            and 'LastName' keys.
-        course_options (list[dict]): Course dicts with 'C_Code' and 'Title'
-            keys.
-        initial_data (dict | None): Pre-populated values for edit mode.
-            When None the dialog operates in add mode.
-
-    Returns:
-        ui.dialog: The fully constructed dialog element.
     """
     is_edit = initial_data is not None
     title = "Edit Evaluation" if is_edit else "Add Evaluation"
@@ -466,6 +449,8 @@ def buildEvaluationDialog(
     dialog, card = _buildDialogShell(title)
     with card:
         with ui.column().classes("w-full gap-3"):
+            
+            # INSTRUCTOR SELECT
             instr_choices = {
                 i["AM"]: f"{i['FirstName']} {i['LastName']} ({i['AM']})"
                 for i in instructor_options
@@ -475,14 +460,16 @@ def buildEvaluationDialog(
                     options=instr_choices,
                     label="Instructor",
                     value=data.get("AM_Instructor"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
 
+            # STUDENT SELECT
             student_choices = {
                 s["AM"]: f"{s['FirstName']} {s['LastName']} ({s['AM']})"
                 for s in student_options
@@ -492,14 +479,16 @@ def buildEvaluationDialog(
                     options=student_choices,
                     label="Student",
                     value=data.get("AM_Student"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
 
+            # COURSE SELECT
             course_choices = {
                 c["C_Code"]: f"{c['Title']} ({c['C_Code']})"
                 for c in course_options
@@ -509,10 +498,11 @@ def buildEvaluationDialog(
                     options=course_choices,
                     label="Course",
                     value=data.get("C_Code"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
@@ -545,6 +535,7 @@ def buildEvaluationDialog(
 
         def _submit():
             """Collects field values and delegates to the provided callback."""
+            # These values will now correctly return the dictionary keys (AM / C_Code)
             payload = {
                 "AM_Instructor": instr_select.value,
                 "AM_Student": student_select.value,
