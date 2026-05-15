@@ -1,9 +1,5 @@
 # ScholarConnect Security Audit
 
-All identified risks are currently unaddressed and require remediation.
-
----
-
 ## Security Risk Register
 
 | # | Category | Risk Description | Severity | Location | Status |
@@ -64,21 +60,7 @@ All identified risks are currently unaddressed and require remediation.
 
 ---
 
-## Summary by Severity
-
-| Severity | Count |
-|----------|-------|
-| Critical | 4 |
-| High | 8 |
-| Medium | 26 |
-| Low | 15 |
-| **Total** | **53** |
-
----
-
-## Key Findings
-
-### Critical
+## Critical Key Findings
 
 1. **Plaintext Passwords + Hardcoded Admin Backdoor** — The authentication system provides no real security. The combination of `admin`/`admin` bypass (`auth.py` lines 102-107) and plaintext password storage and comparison across all CRUD operations (`student_actions.py` line 26, `professor_actions.py` line 27, `auth.py` line 116) means any user who can read the source code (all users, since this repository is public) can authenticate as administrator.
 
@@ -97,3 +79,16 @@ All identified risks are currently unaddressed and require remediation.
 6. **Data Mass Exposure** — Every `list*` function returns all records regardless of the requesting user's relationship to the data. Client-side filtering is the only protection.
 
 7. **Ubiquitous Stored XSS Risk** — User-supplied text fields (names, comments, descriptions) render directly into Vue/Quasar templates without sanitization, across all entity management pages.
+
+
+---
+
+## Summary by Severity
+
+| Severity | Count |
+|----------|-------|
+| Critical | 4 |
+| High | 8 |
+| Medium | 26 |
+| Low | 15 |
+| **Total** | **53** |
