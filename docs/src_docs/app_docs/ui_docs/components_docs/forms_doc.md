@@ -701,7 +701,7 @@ def buildEnrollmentDialog(
 **Purpose:** Constructs the Add/Edit Evaluation modal dialog.
 
 #### Overview
-Builds the performance review interface. Uses multiple relation selectors alongside an interactive slider element for numerical ranking, implementing a mutable rating label connected to slider events.
+Builds the performance review interface. Uses multiple relation selectors alongside an interactive slider element for numerical ranking, implementing a mutable rating label connected to slider events. Selectors are configured with input filtering to handle large entity sets efficiently.
 
 #### Signature
 ```python
@@ -739,22 +739,23 @@ Sets up base structure.
 * **Operation 1:** Determines edit mode and starts the shell.
 
 **Phase 2: Entity Selection Lists**
-Constructs three primary relational dropdowns.
-* **Operation 1:** Maps `instructor_options` to `ui.select`, applying `readonly` conditionally.
-* **Operation 2:** Maps `student_options` to `ui.select`, applying `readonly` conditionally.
-* **Operation 3:** Maps `course_options` to `ui.select`, applying `readonly` conditionally.
+Constructs three primary relational dropdowns for Instructor, Student, and Course entities.
+* **Operation 1:** Maps `instructor_options` to `ui.select`. The `with_input=True` property is enabled to allow user filtering via text input. The component is set to `readonly` if the dialog is in edit mode.
+* **Operation 2:** Maps `student_options` to `ui.select` with `with_input=True` for filtering and conditional `readonly` state.
+* **Operation 3:** Maps `course_options` to `ui.select` with `with_input=True` for filtering and conditional `readonly` state.
 
 **Phase 3: Interactive Slider Logic**
 Implements a 1-10 range slider with dynamic text updates.
-* **Operation 1:** Encapsulates the initial integer rating in a `rating_value` dictionary to allow modification within inner scopes if necessary.
+* **Operation 1:** Encapsulates the initial integer rating in a `rating_value` dictionary.
 * **Operation 2:** Instantiates `ui.slider()` with bounds `min=1` and `max=10`.
 * **Operation 3:** Creates a static `ui.label()` component to display the current selection.
-* **Operation 4:** Binds a callback to the slider's `update:modelValue` event. The lambda function intercepts the emitted event argument, parses it to an integer, and executes `rating_label.set_text()`, ensuring the display updates in real-time as the slider drag thumb is adjusted.
+* **Operation 4:** Binds a callback to the slider's `update:modelValue` event to execute `rating_label.set_text()`, ensuring real-time display updates.
 
 **Phase 4: Submission Handling**
-Completes the form structure.
+Completes the form structure and defines retrieval logic.
 * **Operation 1:** Configures a `ui.textarea` for subjective review comments.
-* **Operation 2:** Packages values in `_submit()` and integrates `_actionRow()`.
+* **Operation 2:** Defines an internal `_submit()` closure that collects the current values from selectors and the slider, ensuring keys (AM / C_Code) are correctly captured.
+* **Operation 3:** Integrates `_actionRow()` to finalize the layout.
 
 #### Source Code
 ```python
@@ -772,6 +773,8 @@ def buildEvaluationDialog(
     dialog, card = _buildDialogShell(title)
     with card:
         with ui.column().classes("w-full gap-3"):
+            
+            # INSTRUCTOR SELECT
             instr_choices = {
                 i["AM"]: f"{i['FirstName']} {i['LastName']} ({i['AM']})"
                 for i in instructor_options
@@ -781,14 +784,16 @@ def buildEvaluationDialog(
                     options=instr_choices,
                     label="Instructor",
                     value=data.get("AM_Instructor"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
 
+            # STUDENT SELECT
             student_choices = {
                 s["AM"]: f"{s['FirstName']} {s['LastName']} ({s['AM']})"
                 for s in student_options
@@ -798,14 +803,16 @@ def buildEvaluationDialog(
                     options=student_choices,
                     label="Student",
                     value=data.get("AM_Student"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
 
+            # COURSE SELECT
             course_choices = {
                 c["C_Code"]: f"{c['Title']} ({c['C_Code']})"
                 for c in course_options
@@ -815,14 +822,16 @@ def buildEvaluationDialog(
                     options=course_choices,
                     label="Course",
                     value=data.get("C_Code"),
+                    with_input=True, # Allows typing to filter options
                 )
                 .classes("w-full")
                 .props(
-                    f"outlined dark dense emit-value map-options "
+                    f"outlined dark dense "
                     f"{'readonly' if is_edit else ''}"
                 )
             )
 
+            # Rating slider (1-10)
             rating_value = {"v": int(data.get("Rating") or 5)}
             with ui.row().classes("w-full items-center gap-3"):
                 ui.label("Rating").classes("text-white/70 text-sm w-16")
@@ -849,6 +858,8 @@ def buildEvaluationDialog(
             )
 
         def _submit():
+            """Collects field values and delegates to the provided callback."""
+            # These values will now correctly return the dictionary keys (AM / C_Code)
             payload = {
                 "AM_Instructor": instr_select.value,
                 "AM_Student": student_select.value,

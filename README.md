@@ -47,6 +47,3 @@ ScholarConnect is a centralized academic management platform designed to streaml
 - **Data Engineering:** Pandas, Faker
 - **Frontend:** NiceGUI (Web-based)
 
-
-
-*Note: This project is currently under active development.*

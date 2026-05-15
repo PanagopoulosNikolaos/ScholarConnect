@@ -429,8 +429,6 @@ def buildEnrollmentDialog(
 # ---------------------------------------------------------------------------
 # Evaluation forms
 # ---------------------------------------------------------------------------
-from typing import Callable
-from nicegui import ui
 
 def buildEvaluationDialog(
     on_submit: Callable[[dict], None],

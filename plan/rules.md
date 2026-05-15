@@ -5,7 +5,7 @@
 ---
 
 # Coding
-> The following is to apply to all languages (Python, C, C++, Bash, etc.)
+> The following is to apply to all languages (Python, C, C++, Bash, etc.) that may be used in this project.
 - Classes: Use **PascalCase**
 - Functions: Use **camelCase**
 - Variables: Use **snake_case** for all variables and class members
